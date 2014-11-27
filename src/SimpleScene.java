@@ -60,18 +60,13 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Texture arwingTexture = null;
 	private static Texture parkingLotTexture = null;
 
-	private static Vector3f cameraPosition = new Vector3f(0, 1, 5);
-	private static Vector3f cameraRotation = new Vector3f(0, 0, 0);
+	private static Vector3f arwingPosition = new Vector3f(0, 3, 5);
+	private static Vector3f arwingRotation = new Vector3f(0, 0, 0);
 
-	private static boolean cameraLeft = false;
-	private static boolean cameraRight = false;
-	private static boolean cameraUp = false;
-	private static boolean cameraDown = false;
-
-	private static boolean rotateLeft = false;
-	private static boolean rotateRight = false;
-	private static boolean rotateUp = false;
-	private static boolean rotateDown = false;
+	private static boolean arwingLeft = false;
+	private static boolean arwingRight = false;
+	private static boolean arwingUp = false;
+	private static boolean arwingDown = false;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -203,60 +198,41 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 																// buffers
 		gl.glLoadIdentity(); // reset the model-view matrix
 
-		gl.glRotatef((float) (-cameraRotation.getX() * 180 / Math.PI), 1, 0, 0);
-		gl.glRotatef((float) (-cameraRotation.getY() * 180 / Math.PI), 0, 1, 0);
-		gl.glTranslatef(-cameraPosition.getX(), -cameraPosition.getY(),
-				-cameraPosition.getZ());
-
+		gl.glTranslatef(0, -1, -10);
+		gl.glRotatef((float) (-arwingRotation.getX() * 180 / Math.PI), 1, 0, 0);
+		gl.glRotatef((float) (-arwingRotation.getY() * 180 / Math.PI), 0, 1, 0);
+		gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
+				-arwingPosition.getZ());
 		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
 		parkingLotModel.render(gl);
 
-		gl.glTranslatef(0, 0.9f, 0);
-		gl.glScalef(0.01f, 0.01f, 0.01f);
+		gl.glTranslatef(arwingPosition.getX(), arwingPosition.getY(),
+				arwingPosition.getZ());
+		gl.glRotatef((float) (arwingRotation.getX() * 180 / Math.PI), 1, 0, 0);
+		gl.glRotatef((float) (arwingRotation.getY() * 180 / Math.PI), 0, 1, 0);
+		gl.glScalef(0.01f, 0.01f, -0.01f);
 		gl.glBindTexture(GL_TEXTURE_2D, arwingTexture.getTextureObject());
 		arwingModel.render(gl);
-		gl.glScalef(100f, 100f, 100f);
-		gl.glTranslatef(0, -0.9f, 0);
 	}
 
 	private void update() {
 
-		if (cameraLeft) {
-			cameraPosition.setX(cameraPosition.getX() - CAMERA_SPEED
-					* (float) Math.cos(cameraRotation.getY()));
-			cameraPosition.setZ(cameraPosition.getZ() + CAMERA_SPEED
-					* (float) Math.sin(cameraRotation.getY()));
-		}
-		if (cameraRight) {
-			cameraPosition.setX(cameraPosition.getX() + CAMERA_SPEED
-					* (float) Math.cos(cameraRotation.getY()));
-			cameraPosition.setZ(cameraPosition.getZ() - CAMERA_SPEED
-					* (float) Math.sin(cameraRotation.getY()));
-		}
-		if (cameraDown) {
-			cameraPosition.setX(cameraPosition.getX() + CAMERA_SPEED
-					* (float) Math.sin(cameraRotation.getY()));
-			cameraPosition.setZ(cameraPosition.getZ() + CAMERA_SPEED
-					* (float) Math.cos(cameraRotation.getY()));
-		}
-		if (cameraUp) {
-			cameraPosition.setX(cameraPosition.getX() - CAMERA_SPEED
-					* (float) Math.sin(cameraRotation.getY()));
-			cameraPosition.setZ(cameraPosition.getZ() - CAMERA_SPEED
-					* (float) Math.cos(cameraRotation.getY()));
-		}
+		 arwingPosition.setX(arwingPosition.getX() - CAMERA_SPEED
+		 * (float) Math.sin(arwingRotation.getY()));
+		 arwingPosition.setZ(arwingPosition.getZ() - CAMERA_SPEED
+		 * (float) Math.cos(arwingRotation.getY()));
 
-		if (rotateLeft) {
-			cameraRotation.setY(cameraRotation.getY() + CAMERA_ROTATION_AMOUNT);
+		if (arwingLeft) {
+			arwingRotation.setY(arwingRotation.getY() + CAMERA_ROTATION_AMOUNT);
 		}
-		if (rotateRight) {
-			cameraRotation.setY(cameraRotation.getY() - CAMERA_ROTATION_AMOUNT);
+		if (arwingRight) {
+			arwingRotation.setY(arwingRotation.getY() - CAMERA_ROTATION_AMOUNT);
 		}
-		if (rotateDown) {
-			cameraRotation.setX(cameraRotation.getX() - CAMERA_ROTATION_AMOUNT);
+		if (arwingDown) {
+			arwingRotation.setX(arwingRotation.getX() - CAMERA_ROTATION_AMOUNT);
 		}
-		if (rotateUp) {
-			cameraRotation.setX(cameraRotation.getX() + CAMERA_ROTATION_AMOUNT);
+		if (arwingUp) {
+			arwingRotation.setX(arwingRotation.getX() + CAMERA_ROTATION_AMOUNT);
 		}
 	}
 
@@ -278,28 +254,16 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public void keyPressed(java.awt.event.KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case java.awt.event.KeyEvent.VK_LEFT:
-			cameraLeft = true;
+			arwingLeft = true;
 			break;
 		case java.awt.event.KeyEvent.VK_RIGHT:
-			cameraRight = true;
+			arwingRight = true;
 			break;
 		case java.awt.event.KeyEvent.VK_DOWN:
-			cameraDown = true;
+			arwingDown = true;
 			break;
 		case java.awt.event.KeyEvent.VK_UP:
-			cameraUp = true;
-			break;
-		case java.awt.event.KeyEvent.VK_A:
-			rotateLeft = true;
-			break;
-		case java.awt.event.KeyEvent.VK_D:
-			rotateRight = true;
-			break;
-		case java.awt.event.KeyEvent.VK_S:
-			rotateUp = true;
-			break;
-		case java.awt.event.KeyEvent.VK_W:
-			rotateDown = true;
+			arwingUp = true;
 			break;
 		}
 	}
@@ -308,28 +272,16 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public void keyReleased(java.awt.event.KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case java.awt.event.KeyEvent.VK_LEFT:
-			cameraLeft = false;
+			arwingLeft = false;
 			break;
 		case java.awt.event.KeyEvent.VK_RIGHT:
-			cameraRight = false;
+			arwingRight = false;
 			break;
 		case java.awt.event.KeyEvent.VK_DOWN:
-			cameraDown = false;
+			arwingDown = false;
 			break;
 		case java.awt.event.KeyEvent.VK_UP:
-			cameraUp = false;
-			break;
-		case java.awt.event.KeyEvent.VK_A:
-			rotateLeft = false;
-			break;
-		case java.awt.event.KeyEvent.VK_D:
-			rotateRight = false;
-			break;
-		case java.awt.event.KeyEvent.VK_S:
-			rotateUp = false;
-			break;
-		case java.awt.event.KeyEvent.VK_W:
-			rotateDown = false;
+			arwingUp = false;
 			break;
 		}
 	}
