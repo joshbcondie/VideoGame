@@ -51,8 +51,9 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static String TITLE = "Video Game"; // window's title
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
-	private static final float CAMERA_ROTATION_AMOUNT = 0.02f;
-	private static final float CAMERA_SPEED = 0.1f;
+
+	private static final float SHIP_ROTATION = 0.02f;
+	private static final float SHIP_SPEED = 0.1f;
 
 	private static ObjModel parkingLotModel = null;
 	private static ObjModel arwingModel = null;
@@ -217,22 +218,22 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	private void update() {
 
-		 arwingPosition.setX(arwingPosition.getX() - CAMERA_SPEED
-		 * (float) Math.sin(arwingRotation.getY()));
-		 arwingPosition.setZ(arwingPosition.getZ() - CAMERA_SPEED
-		 * (float) Math.cos(arwingRotation.getY()));
+		arwingPosition.setX(arwingPosition.getX() - SHIP_SPEED
+				* (float) Math.sin(arwingRotation.getY()));
+		arwingPosition.setZ(arwingPosition.getZ() - SHIP_SPEED
+				* (float) Math.cos(arwingRotation.getY()));
 
 		if (arwingLeft) {
-			arwingRotation.setY(arwingRotation.getY() + CAMERA_ROTATION_AMOUNT);
+			arwingRotation.setY(arwingRotation.getY() + SHIP_ROTATION);
 		}
 		if (arwingRight) {
-			arwingRotation.setY(arwingRotation.getY() - CAMERA_ROTATION_AMOUNT);
+			arwingRotation.setY(arwingRotation.getY() - SHIP_ROTATION);
 		}
 		if (arwingDown) {
-			arwingRotation.setX(arwingRotation.getX() - CAMERA_ROTATION_AMOUNT);
+			arwingRotation.setX(arwingRotation.getX() - SHIP_ROTATION);
 		}
 		if (arwingUp) {
-			arwingRotation.setX(arwingRotation.getX() + CAMERA_ROTATION_AMOUNT);
+			arwingRotation.setX(arwingRotation.getX() + SHIP_ROTATION);
 		}
 	}
 
