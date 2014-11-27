@@ -1,8 +1,24 @@
-import static javax.media.opengl.GL.*;
-import static javax.media.opengl.GL2ES1.*;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_REPEAT;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
+import static javax.media.opengl.GL2ES1.GL_DECAL;
+import static javax.media.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL2ES1.GL_TEXTURE_ENV;
+import static javax.media.opengl.GL2ES1.GL_TEXTURE_ENV_MODE;
+import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
+import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
+import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -32,33 +48,20 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		java.awt.event.KeyListener {
 
 	// Define constants for the top-level container
-	private static String TITLE = "Transformations"; // window's title
+	private static String TITLE = "Video Game"; // window's title
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 	private static final float CAMERA_ROTATION_AMOUNT = 0.02f;
 	private static final float CAMERA_SPEED = 0.1f;
-	private static final float TIRE_ROTATION_AMOUNT = 0.05f;
-	private static final float CAR_SPEED = 0.05f;
-	private static final float BACKWARD_SPEED = 0.005f;
 
-	private static ObjModel carModel = null;
-	private static ObjModel tireModel = null;
 	private static ObjModel parkingLotModel = null;
-	private static ObjModel penguinModel = null;
+	private static ObjModel arwingModel = null;
 
-	private static Texture carTexture = null;
-	private static Texture tireTexture = null;
+	private static Texture arwingTexture = null;
 	private static Texture parkingLotTexture = null;
 
 	private static Vector3f cameraPosition = new Vector3f(0, 1, 5);
 	private static Vector3f cameraRotation = new Vector3f(0, 0, 0);
-	private static float tireOrientation = 0.001f;
-	private static float tireRotation = 0;
-
-	private static Vector3f carPosition = new Vector3f(-2.5f, 0.1f, -7.5f);
-	private static float carRotation = (float) (55 * Math.PI / 180);
-	// private static Vector3f carPosition = new Vector3f(0, 0, 0);
-	// private static float carRotation = 0;
 
 	private static boolean cameraLeft = false;
 	private static boolean cameraRight = false;
@@ -69,12 +72,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static boolean rotateRight = false;
 	private static boolean rotateUp = false;
 	private static boolean rotateDown = false;
-
-	private static boolean tireLeft = false;
-	private static boolean tireRight = false;
-
-	private static boolean carForward = false;
-	private static boolean carBackward = false;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -145,8 +142,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		gl.glShadeModel(GL_SMOOTH); // blends colors nicely, and smoothes out
 									// lighting
 		try {
-			carTexture = TextureIO.newTexture(new File("car.jpg"), false);
-			tireTexture = TextureIO.newTexture(new File("tire.jpg"), false);
+			arwingTexture = TextureIO.newTexture(new File("arwing.jpg"), false);
 			parkingLotTexture = TextureIO.newTexture(
 					new File("ParkingLot.jpg"), false);
 		} catch (GLException | IOException e) {
@@ -159,10 +155,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		try {
-			carModel = new ObjModel(new File("car.obj"));
-			tireModel = new ObjModel(new File("tire.obj"));
 			parkingLotModel = new ObjModel(new File("ParkingLot.obj"));
-			penguinModel = new ObjModel(new File("Penguin.obj"));
+			arwingModel = new ObjModel(new File("arwing.obj"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -207,54 +201,22 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color
 																// and depth
 																// buffers
-		Matrix viewMatrix = new Matrix(4, 4);
-		viewMatrix.loadIdentity(); // reset the model-view matrix
+		gl.glLoadIdentity(); // reset the model-view matrix
 
-		viewMatrix.rotateX(-cameraRotation.getX());
-		viewMatrix.rotateY(-cameraRotation.getY());
-		viewMatrix.translate(-cameraPosition.getX(), -cameraPosition.getY(),
+		gl.glRotatef((float) (-cameraRotation.getX() * 180 / Math.PI), 1, 0, 0);
+		gl.glRotatef((float) (-cameraRotation.getY() * 180 / Math.PI), 0, 1, 0);
+		gl.glTranslatef(-cameraPosition.getX(), -cameraPosition.getY(),
 				-cameraPosition.getZ());
 
 		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
-		parkingLotModel.render(gl, viewMatrix);
+		parkingLotModel.render(gl);
 
-		viewMatrix.translate(carPosition.getX(), carPosition.getY(),
-				carPosition.getZ());
-		viewMatrix.rotateY(carRotation);
-		gl.glBindTexture(GL_TEXTURE_2D, carTexture.getTextureObject());
-		carModel.render(gl, viewMatrix);
-
-		viewMatrix.translate(0, 0.9f, 0);
-		viewMatrix.scale(0.1f, 0.1f, 0.1f);
-		gl.glBindTexture(GL_TEXTURE_2D, tireTexture.getTextureObject());
-		penguinModel.render(gl, viewMatrix);
-		viewMatrix.scale(10f, 10f, 10f);
-		viewMatrix.translate(0, -0.9f, 0);
-
-		viewMatrix.translate(0.36f, 0.12f, -0.54f);
-		viewMatrix.scale(0.25f, 0.25f, 0.25f);
-		viewMatrix.rotateY(tireOrientation);
-		viewMatrix.rotateX(tireRotation);
-		gl.glBindTexture(GL_TEXTURE_2D, tireTexture.getTextureObject());
-		tireModel.render(gl, viewMatrix);
-		viewMatrix.rotateX(-tireRotation);
-		viewMatrix.rotateY(-tireOrientation);
-
-		viewMatrix.translate(0, 0, 4.1f);
-		viewMatrix.rotateX(tireRotation);
-		tireModel.render(gl, viewMatrix);
-		viewMatrix.rotateX(-tireRotation);
-
-		viewMatrix.translate(-2.9f, 0, 0);
-		viewMatrix.rotateY((float) Math.PI);
-		viewMatrix.rotateX(-tireRotation);
-		tireModel.render(gl, viewMatrix);
-		viewMatrix.rotateX(tireRotation);
-
-		viewMatrix.translate(0, 0, 4.1f);
-		viewMatrix.rotateY(tireOrientation);
-		viewMatrix.rotateX(-tireRotation);
-		tireModel.render(gl, viewMatrix);
+		gl.glTranslatef(0, 0.9f, 0);
+		gl.glScalef(0.01f, 0.01f, 0.01f);
+		gl.glBindTexture(GL_TEXTURE_2D, arwingTexture.getTextureObject());
+		arwingModel.render(gl);
+		gl.glScalef(100f, 100f, 100f);
+		gl.glTranslatef(0, -0.9f, 0);
 	}
 
 	private void update() {
@@ -295,85 +257,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		}
 		if (rotateUp) {
 			cameraRotation.setX(cameraRotation.getX() + CAMERA_ROTATION_AMOUNT);
-		}
-
-		if (tireLeft && tireOrientation < Math.PI / 4) {
-			tireOrientation += TIRE_ROTATION_AMOUNT;
-		}
-		if (tireRight && tireOrientation > -Math.PI / 4) {
-			tireOrientation -= TIRE_ROTATION_AMOUNT;
-		}
-
-		if (carForward) {
-
-			// Form a triangle to find out which point to rotate about
-			float z = 3.56f;
-			float x = 1000;
-			x = (float) -(4.64 / Math.tan(tireOrientation));
-
-			Matrix carTransformation = new Matrix(4, 4);
-			carTransformation.loadIdentity();
-
-			// Put car in the origin
-			carTransformation.translate(carPosition.getX(), carPosition.getY(),
-					carPosition.getZ());
-			carTransformation.rotateY(carRotation);
-
-			// Rotate around the point
-			carTransformation.translate(x, 0, z);
-			carTransformation.rotateY(tireOrientation * CAR_SPEED);
-			carTransformation.translate(-x, 0, -z);
-
-			// Undo transformations
-			carTransformation.rotateY(-carRotation);
-			carTransformation.translate(-carPosition.getX(),
-					-carPosition.getY(), -carPosition.getZ());
-
-			// Move car
-			carPosition = carTransformation.multiply(new Matrix(carPosition))
-					.toVector3f();
-			carRotation += tireOrientation * CAR_SPEED;
-			tireOrientation -= tireOrientation * CAR_SPEED;
-
-			// Rotate tire
-			tireRotation -= CAR_SPEED;
-		}
-
-		if (carBackward) {
-
-			// Form a triangle to find out which point to rotate about
-			float z = 3.56f;
-			float x = 1000;
-			x = (float) -(4.64 / Math.tan(tireOrientation));
-
-			Matrix carTransformation = new Matrix(4, 4);
-			carTransformation.loadIdentity();
-
-			// Put car in the origin
-			carTransformation.translate(carPosition.getX(), carPosition.getY(),
-					carPosition.getZ());
-			carTransformation.rotateY(carRotation);
-
-			// Rotate around the point
-			carTransformation.translate(x, 0, z);
-			carTransformation.rotateY(-tireOrientation * BACKWARD_SPEED);
-			carTransformation.translate(-x, 0, -z);
-
-			// Undo transformations
-			carTransformation.rotateY(-carRotation);
-			carTransformation.translate(-carPosition.getX(),
-					-carPosition.getY(), -carPosition.getZ());
-
-			// Move car
-			carPosition = carTransformation.multiply(new Matrix(carPosition))
-					.toVector3f();
-			carRotation -= tireOrientation * BACKWARD_SPEED;
-			if (tireOrientation + tireOrientation * BACKWARD_SPEED < Math.PI / 4
-					&& tireOrientation + tireOrientation * BACKWARD_SPEED > -Math.PI / 4)
-				tireOrientation += tireOrientation * BACKWARD_SPEED;
-
-			// Rotate tire
-			tireRotation += CAR_SPEED;
 		}
 	}
 
@@ -418,18 +301,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		case java.awt.event.KeyEvent.VK_W:
 			rotateDown = true;
 			break;
-		case java.awt.event.KeyEvent.VK_T:
-			tireLeft = true;
-			break;
-		case java.awt.event.KeyEvent.VK_Y:
-			tireRight = true;
-			break;
-		case java.awt.event.KeyEvent.VK_SPACE:
-			carForward = true;
-			break;
-		case java.awt.event.KeyEvent.VK_B:
-			carBackward = true;
-			break;
 		}
 	}
 
@@ -459,18 +330,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			break;
 		case java.awt.event.KeyEvent.VK_W:
 			rotateDown = false;
-			break;
-		case java.awt.event.KeyEvent.VK_T:
-			tireLeft = false;
-			break;
-		case java.awt.event.KeyEvent.VK_Y:
-			tireRight = false;
-			break;
-		case java.awt.event.KeyEvent.VK_SPACE:
-			carForward = false;
-			break;
-		case java.awt.event.KeyEvent.VK_B:
-			carBackward = false;
 			break;
 		}
 	}

@@ -38,7 +38,7 @@ public class ObjModel {
 		Scanner scanner = new Scanner(file);
 
 		while (scanner.hasNextLine()) {
-			String[] line = scanner.nextLine().split(" ");
+			String[] line = scanner.nextLine().replaceAll(" +", " ").split(" ");
 			if (line[0].equals("v")) {
 				float x = Float.parseFloat(line[1]);
 				float y = Float.parseFloat(line[2]);
@@ -74,7 +74,7 @@ public class ObjModel {
 	 * @param gl
 	 *            the instance to which the model will be rendered.
 	 */
-	public void render(GL2 gl, Matrix matrix) {
+	public void render(GL2 gl) {
 		for (Face face : faces) {
 			gl.glEnable(GL_TEXTURE_2D);
 			if (face.getVertices().size() == 3) {
@@ -94,10 +94,7 @@ public class ObjModel {
 				}
 				int vertexIndex = face.getVertices().get(i);
 				Vector3f vertex = vertices.get(vertexIndex - 1);
-				Vector3f transformed = matrix.multiply(new Matrix(vertex))
-						.toVector3f();
-				gl.glVertex3f(transformed.getX(), transformed.getY(),
-						transformed.getZ());
+				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
 			}
 
 			gl.glEnd();
