@@ -19,8 +19,11 @@ import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -81,6 +84,11 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 				GLCanvas canvas = new SimpleScene();
 				canvas.setPreferredSize(new Dimension(CANVAS_WIDTH,
 						CANVAS_HEIGHT));
+				canvas.setCursor(Toolkit.getDefaultToolkit()
+						.createCustomCursor(
+								new BufferedImage(1, 1,
+										BufferedImage.TYPE_INT_ARGB),
+								new Point(0, 0), "none"));
 
 				// Create the top-level container
 				final JFrame frame = new JFrame(); // Swing's JFrame or AWT's
