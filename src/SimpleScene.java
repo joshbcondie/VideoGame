@@ -62,6 +62,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Texture parkingLotTexture = null;
 
 	private static Vector3f arwingPosition = new Vector3f(0, 3, 5);
+	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
+	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static Vector3f arwingRotation = new Vector3f(0, 0, 0);
 
 	private static boolean arwingLeft = false;
@@ -200,40 +202,70 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		gl.glLoadIdentity(); // reset the model-view matrix
 
 		gl.glTranslatef(0, -1, -10);
-		gl.glRotatef((float) (-arwingRotation.getX() * 180 / Math.PI), 1, 0, 0);
-		gl.glRotatef((float) (-arwingRotation.getY() * 180 / Math.PI), 0, 1, 0);
-		gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
-				-arwingPosition.getZ());
+		// gl.glRotatef((float) (-arwingRotation.getX() * 180 / Math.PI), 1, 0,
+		// 0);
+		// gl.glRotatef((float) (-arwingRotation.getY() * 180 / Math.PI), 0, 1,
+		// 0);
+		// gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
+		// -arwingPosition.getZ());
 		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
 		parkingLotModel.render(gl);
 
 		gl.glTranslatef(arwingPosition.getX(), arwingPosition.getY(),
 				arwingPosition.getZ());
-		gl.glRotatef((float) (arwingRotation.getX() * 180 / Math.PI), 1, 0, 0);
-		gl.glRotatef((float) (arwingRotation.getY() * 180 / Math.PI), 0, 1, 0);
-		gl.glScalef(0.01f, 0.01f, -0.01f);
+		// gl.glRotatef((float) (arwingRotation.getX() * 180 / Math.PI), 1, 0,
+		// 0);
+		// gl.glRotatef((float) (arwingRotation.getY() * 180 / Math.PI), 0, 1,
+		// 0);
+		gl.glScalef(0.01f, 0.01f, 0.01f);
+		gl.glRotatef(180, 0, 1, 0);
+		gl.glMultMatrixf(
+				Matrix.changeOfBasis(arwingXAxis, arwingYAxis,
+						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
 		gl.glBindTexture(GL_TEXTURE_2D, arwingTexture.getTextureObject());
 		arwingModel.render(gl);
 	}
 
 	private void update() {
 
-		arwingPosition.setX(arwingPosition.getX() - SHIP_SPEED
-				* (float) Math.sin(arwingRotation.getY()));
-		arwingPosition.setZ(arwingPosition.getZ() - SHIP_SPEED
-				* (float) Math.cos(arwingRotation.getY()));
+		// arwingPosition.setX(arwingPosition.getX() - SHIP_SPEED
+		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
+		// arwingPosition.setY(arwingPosition.getY() - SHIP_SPEED
+		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
+		// arwingPosition.setZ(arwingPosition.getZ() - SHIP_SPEED
+		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
 
 		if (arwingLeft) {
 			arwingRotation.setY(arwingRotation.getY() + SHIP_ROTATION);
+			Matrix matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingYAxis, SHIP_ROTATION);
+			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
+					.normalize();
 		}
 		if (arwingRight) {
 			arwingRotation.setY(arwingRotation.getY() - SHIP_ROTATION);
+			Matrix matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION);
+			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
+					.normalize();
 		}
 		if (arwingDown) {
 			arwingRotation.setX(arwingRotation.getX() - SHIP_ROTATION);
+			Matrix matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingXAxis, -SHIP_ROTATION);
+			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
+					.normalize();
 		}
 		if (arwingUp) {
 			arwingRotation.setX(arwingRotation.getX() + SHIP_ROTATION);
+			Matrix matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION);
+			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
+					.normalize();
 		}
 	}
 

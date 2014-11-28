@@ -15,6 +15,17 @@ public class Vector3f {
 		this.y = y;
 	}
 
+	public Vector3f normalize() {
+		double length = Math.sqrt(x * x + y * y + z * z);
+		return new Vector3f((float) (x / length), (float) (y / length),
+				(float) (z / length));
+	}
+
+	public Vector3f crossProduct(Vector3f vector) {
+		return new Vector3f(y * vector.z - z * vector.y, z * vector.x - x
+				* vector.z, x * vector.y - y * vector.x);
+	}
+
 	public float getX() {
 		return x;
 	}
