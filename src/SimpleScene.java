@@ -20,6 +20,7 @@ import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -74,10 +75,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Vector3f arwingPosition = new Vector3f(0, 3, -5);
 	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
-	private static boolean arwingLeft = false;
-	private static boolean arwingRight = false;
-	private static boolean arwingUp = false;
-	private static boolean arwingDown = false;
+	private static int mouseMovementX = 0;
+	private static int mouseMovementY = 0;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -245,34 +244,17 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		arwingPosition.setZ(arwingPosition.getZ() + SHIP_SPEED
 				* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
 
-		if (arwingLeft) {
-			Matrix matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingYAxis, SHIP_ROTATION);
-			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
-					.normalize();
-		}
-		if (arwingRight) {
-			Matrix matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION);
-			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
-					.normalize();
-		}
-		if (arwingDown) {
-			Matrix matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION);
-			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
-					.normalize();
-		}
-		if (arwingUp) {
-			Matrix matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingXAxis, -SHIP_ROTATION);
-			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
-					.normalize();
-		}
+		Matrix matrix = new Matrix(4, 4);
+		matrix.loadIdentity();
+		matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION * mouseMovementX);
+		arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
+				.normalize();
+
+		matrix = new Matrix(4, 4);
+		matrix.loadIdentity();
+		matrix.rotateAbout(arwingXAxis, SHIP_ROTATION * mouseMovementY);
+		arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
+				.normalize();
 	}
 
 	/**
@@ -289,38 +271,10 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case java.awt.event.KeyEvent.VK_LEFT:
-			arwingLeft = true;
-			break;
-		case java.awt.event.KeyEvent.VK_RIGHT:
-			arwingRight = true;
-			break;
-		case java.awt.event.KeyEvent.VK_DOWN:
-			arwingUp = true;
-			break;
-		case java.awt.event.KeyEvent.VK_UP:
-			arwingDown = true;
-			break;
-		}
 	}
 
 	@Override
 	public void keyReleased(java.awt.event.KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case java.awt.event.KeyEvent.VK_LEFT:
-			arwingLeft = false;
-			break;
-		case java.awt.event.KeyEvent.VK_RIGHT:
-			arwingRight = false;
-			break;
-		case java.awt.event.KeyEvent.VK_DOWN:
-			arwingUp = false;
-			break;
-		case java.awt.event.KeyEvent.VK_UP:
-			arwingDown = false;
-			break;
-		}
 	}
 
 	@Override
@@ -358,6 +312,10 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public void mouseMoved(MouseEvent e) {
 		try {
 			Window window = SwingUtilities.getWindowAncestor(this);
+			mouseMovementX = (int) (MouseInfo.getPointerInfo().getLocation()
+					.getX() - (window.getX() + window.getWidth() / 2));
+			mouseMovementY = (int) (MouseInfo.getPointerInfo().getLocation()
+					.getY() - (window.getY() + window.getHeight() / 2));
 			new Robot().mouseMove(window.getX() + window.getWidth() / 2,
 					window.getY() + window.getHeight() / 2);
 		} catch (AWTException e1) {
