@@ -17,9 +17,12 @@ import javax.media.opengl.GL2;
  */
 public class ObjModel {
 
-	private List<Vector3f> vertices;
-	private List<Vector3f> textureCoordinates;
-	private List<Face> faces;
+	protected List<Vector3f> vertices;
+	protected List<Vector3f> textureCoordinates;
+	protected List<Face> faces;
+
+	protected ObjModel() {
+	}
 
 	/**
 	 * Creates an ObjModel object from a .obj file
@@ -86,7 +89,7 @@ public class ObjModel {
 			}
 
 			for (int i = 0; i < face.getVertices().size(); i++) {
-				if (textureCoordinates.size() > i) {
+				if (textureCoordinates != null && textureCoordinates.size() > i) {
 					Vector3f textureCoordinate = textureCoordinates.get(face
 							.getTextureCoordinates().get(i) - 1);
 					gl.glTexCoord2f(textureCoordinate.getX(),

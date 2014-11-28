@@ -64,19 +64,22 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
 	private static final float SHIP_ROTATION = 0.02f;
-	private static final float SHIP_SPEED = 0.1f;
+	private static final float SHIP_SPEED = 0.01f;
 
 	private static ObjModel parkingLotModel = null;
 	private static ObjModel arwingModel = null;
 
 	private static Texture arwingTexture = null;
 	private static Texture parkingLotTexture = null;
+	private static Texture grassTexture = null;
 
 	private static Vector3f arwingPosition = new Vector3f(0, 3, -5);
 	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static int mouseMovementX = 0;
 	private static int mouseMovementY = 0;
+
+	private static Terrain terrain = new Terrain(10, 2);
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -157,6 +160,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			arwingTexture = TextureIO.newTexture(new File("arwing.jpg"), false);
 			parkingLotTexture = TextureIO.newTexture(
 					new File("ParkingLot.jpg"), false);
+			grassTexture = TextureIO.newTexture(new File("grass.jpg"), false);
 		} catch (GLException | IOException e) {
 			e.printStackTrace();
 		}
@@ -193,7 +197,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		// Setup perspective projection, with aspect ratio matches viewport
 		gl.glMatrixMode(GL_PROJECTION); // choose projection matrix
 		gl.glLoadIdentity(); // reset projection matrix
-		glu.gluPerspective(45.0, aspect, 0.1, 100.0); // fovy, aspect, zNear,
+		glu.gluPerspective(45.0, aspect, 0.1, 1000.0); // fovy, aspect, zNear,
 														// zFar
 
 		// Enable the model-view transform
@@ -224,6 +228,11 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 				-arwingPosition.getZ());
 		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
 		parkingLotModel.render(gl);
+		gl.glPushMatrix();
+		gl.glTranslatef(0, 5, 0);
+//		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
+		terrain.render(gl);
+		gl.glPopMatrix();
 
 		gl.glTranslatef(arwingPosition.getX(), arwingPosition.getY(),
 				arwingPosition.getZ());

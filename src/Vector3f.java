@@ -15,6 +15,10 @@ public class Vector3f {
 		this.y = y;
 	}
 
+	public Vector3f add(Vector3f vector) {
+		return new Vector3f(x + vector.x, y + vector.y, z + vector.z);
+	}
+
 	public Vector3f normalize() {
 		double length = Math.sqrt(x * x + y * y + z * z);
 		return new Vector3f((float) (x / length), (float) (y / length),
