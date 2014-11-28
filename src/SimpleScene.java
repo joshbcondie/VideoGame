@@ -68,8 +68,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	private static boolean arwingLeft = false;
 	private static boolean arwingRight = false;
-	private static boolean arwingUp = false;
 	private static boolean arwingDown = false;
+	private static boolean arwingUp = false;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -236,7 +236,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
 
 		if (arwingLeft) {
-			arwingRotation.setY(arwingRotation.getY() + SHIP_ROTATION);
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingYAxis, SHIP_ROTATION);
@@ -244,23 +243,20 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 					.normalize();
 		}
 		if (arwingRight) {
-			arwingRotation.setY(arwingRotation.getY() - SHIP_ROTATION);
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION);
 			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
 					.normalize();
 		}
-		if (arwingDown) {
-			arwingRotation.setX(arwingRotation.getX() - SHIP_ROTATION);
+		if (arwingUp) {
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingXAxis, -SHIP_ROTATION);
 			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
 					.normalize();
 		}
-		if (arwingUp) {
-			arwingRotation.setX(arwingRotation.getX() + SHIP_ROTATION);
+		if (arwingDown) {
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION);
@@ -293,10 +289,10 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			arwingRight = true;
 			break;
 		case java.awt.event.KeyEvent.VK_DOWN:
-			arwingDown = true;
+			arwingUp = true;
 			break;
 		case java.awt.event.KeyEvent.VK_UP:
-			arwingUp = true;
+			arwingDown = true;
 			break;
 		}
 	}
@@ -311,10 +307,10 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			arwingRight = false;
 			break;
 		case java.awt.event.KeyEvent.VK_DOWN:
-			arwingDown = false;
+			arwingUp = false;
 			break;
 		case java.awt.event.KeyEvent.VK_UP:
-			arwingUp = false;
+			arwingDown = false;
 			break;
 		}
 	}
