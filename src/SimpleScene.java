@@ -18,9 +18,16 @@ import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
+import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -48,7 +55,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
  */
 @SuppressWarnings("serial")
 public class SimpleScene extends GLCanvas implements GLEventListener,
-		java.awt.event.KeyListener {
+		KeyListener, MouseListener, MouseMotionListener {
 
 	// Define constants for the top-level container
 	private static String TITLE = "Video Game"; // window's title
@@ -67,8 +74,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Vector3f arwingPosition = new Vector3f(0, 3, -5);
 	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
-	private static Vector3f arwingRotation = new Vector3f(0, 0, 0);
-
 	private static boolean arwingLeft = false;
 	private static boolean arwingRight = false;
 	private static boolean arwingUp = false;
@@ -126,6 +131,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public SimpleScene() {
 		this.addGLEventListener(this);
 		this.addKeyListener(this);
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 	}
 
 	// ------ Implement methods declared in GLEventListener ------
@@ -278,8 +285,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void keyTyped(java.awt.event.KeyEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -315,6 +320,48 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		case java.awt.event.KeyEvent.VK_UP:
 			arwingDown = false;
 			break;
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		try {
+			Window window = SwingUtilities.getWindowAncestor(this);
+			new Robot().mouseMove(window.getX() + window.getWidth() / 2,
+					window.getY() + window.getHeight() / 2);
+		} catch (AWTException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		try {
+			Window window = SwingUtilities.getWindowAncestor(this);
+			new Robot().mouseMove(window.getX() + window.getWidth() / 2,
+					window.getY() + window.getHeight() / 2);
+		} catch (AWTException e1) {
+			e1.printStackTrace();
 		}
 	}
 }
