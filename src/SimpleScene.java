@@ -228,12 +228,12 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	private void update() {
 
-		// arwingPosition.setX(arwingPosition.getX() - SHIP_SPEED
-		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
-		// arwingPosition.setY(arwingPosition.getY() - SHIP_SPEED
-		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
-		// arwingPosition.setZ(arwingPosition.getZ() - SHIP_SPEED
-		// * arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
+		arwingPosition.setX(arwingPosition.getX() - SHIP_SPEED
+				* arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
+		arwingPosition.setY(arwingPosition.getY() + SHIP_SPEED
+				* arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
+		arwingPosition.setZ(arwingPosition.getZ() - SHIP_SPEED
+				* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
 
 		if (arwingLeft) {
 			Matrix matrix = new Matrix(4, 4);
