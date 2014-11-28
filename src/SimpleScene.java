@@ -68,8 +68,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	private static boolean arwingLeft = false;
 	private static boolean arwingRight = false;
-	private static boolean arwingDown = false;
 	private static boolean arwingUp = false;
+	private static boolean arwingDown = false;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -201,10 +201,11 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 																// buffers
 		gl.glLoadIdentity(); // reset the model-view matrix
 
-		gl.glTranslatef(0, -2, -10);
+		gl.glRotatef(180, 0, 1, 0);
+		gl.glTranslatef(0, -5, 20);
 		gl.glMultMatrixf(
 				Matrix.reverseChangeOfBasis(arwingXAxis, arwingYAxis,
-						arwingYAxis.crossProduct(arwingXAxis)).toArray(), 0);
+						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
 		gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
 				-arwingPosition.getZ());
 		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
@@ -243,14 +244,14 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
 					.normalize();
 		}
-		if (arwingUp) {
+		if (arwingDown) {
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION);
 			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
 					.normalize();
 		}
-		if (arwingDown) {
+		if (arwingUp) {
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingXAxis, -SHIP_ROTATION);
