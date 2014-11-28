@@ -26,6 +26,10 @@ public class Vector3f {
 				* vector.z, x * vector.y - y * vector.x);
 	}
 
+	public Vector3f scale(float scale) {
+		return new Vector3f(x * scale, y * scale, z * scale);
+	}
+
 	public float getX() {
 		return x;
 	}

@@ -33,6 +33,15 @@ public class Matrix {
 		return matrix;
 	}
 
+	public static Matrix reverseChangeOfBasis(Vector3f v1, Vector3f v2,
+			Vector3f v3) {
+		Matrix matrix = new Matrix(4, 4);
+		matrix.values = new float[][] { { v1.getX(), v2.getX(), v3.getX(), 0 },
+				{ v1.getY(), v2.getY(), v3.getY(), 0 },
+				{ v1.getZ(), v2.getZ(), v3.getZ(), 0 }, { 0, 0, 0, 1 } };
+		return matrix;
+	}
+
 	public void loadIdentity() {
 		for (int i = 0; i < values.length; i++) {
 			values[i][i] = 1;
