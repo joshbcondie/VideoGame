@@ -230,7 +230,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		parkingLotModel.render(gl);
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 5, 0);
-//		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
+		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
 		terrain.render(gl);
 		gl.glPopMatrix();
 
