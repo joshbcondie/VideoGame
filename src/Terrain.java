@@ -46,6 +46,7 @@ public class Terrain extends ObjModel {
 			y += (float) (Math.random() * 5 - 2.5);
 			z /= 4f;
 			// z += (float) (Math.random() * 10 - 5);
+
 			vertices.add(new Vector3f(vertices.get(
 					face.getVertices().get(0) - 1).getX(), (vertices.get(
 					face.getVertices().get(0) - 1).getY() + vertices.get(
@@ -64,6 +65,53 @@ public class Terrain extends ObjModel {
 					face.getVertices().get(3) - 1).getZ()));
 			vertices.add(new Vector3f(x, y, z));
 
+			textureCoordinates
+					.add(new Vector3f(textureCoordinates.get(
+							face.getTextureCoordinates().get(0) - 1).getX(),
+							(textureCoordinates.get(
+									face.getTextureCoordinates().get(0) - 1)
+									.getY() + textureCoordinates.get(
+									face.getTextureCoordinates().get(1) - 1)
+									.getY()) / 2));
+			textureCoordinates
+					.add(new Vector3f(
+							(textureCoordinates.get(
+									face.getTextureCoordinates().get(1) - 1)
+									.getX() + textureCoordinates.get(
+									face.getTextureCoordinates().get(2) - 1)
+									.getX()) / 2, textureCoordinates.get(
+									face.getTextureCoordinates().get(1) - 1)
+									.getY()));
+			textureCoordinates
+					.add(new Vector3f(textureCoordinates.get(
+							face.getTextureCoordinates().get(2) - 1).getX(),
+							(textureCoordinates.get(
+									face.getTextureCoordinates().get(2) - 1)
+									.getY() + textureCoordinates.get(
+									face.getTextureCoordinates().get(3) - 1)
+									.getY()) / 2));
+			textureCoordinates
+					.add(new Vector3f(
+							(textureCoordinates.get(
+									face.getTextureCoordinates().get(3) - 1)
+									.getX() + textureCoordinates.get(
+									face.getTextureCoordinates().get(0) - 1)
+									.getX()) / 2, textureCoordinates.get(
+									face.getTextureCoordinates().get(3) - 1)
+									.getY()));
+
+			textureCoordinates
+					.add(new Vector3f(
+							(textureCoordinates.get(
+									face.getTextureCoordinates().get(0) - 1)
+									.getX() + textureCoordinates.get(
+									face.getTextureCoordinates().get(3) - 1)
+									.getX()) / 2, (textureCoordinates.get(
+									face.getTextureCoordinates().get(0) - 1)
+									.getY() + textureCoordinates.get(
+									face.getTextureCoordinates().get(1) - 1)
+									.getY()) / 2));
+
 			int currentSize = vertices.size();
 
 			Face f1 = new Face();
@@ -71,9 +119,10 @@ public class Terrain extends ObjModel {
 			f1.addVertex(currentSize - 4);
 			f1.addVertex(currentSize);
 			f1.addVertex(currentSize - 1);
-			for (int i = 0; i < 4; i++) {
-				f1.addTextureCoordinate(i + 1);
-			}
+			f1.addTextureCoordinate(face.getTextureCoordinates().get(0));
+			f1.addTextureCoordinate(currentSize - 4);
+			f1.addTextureCoordinate(currentSize);
+			f1.addTextureCoordinate(currentSize - 1);
 			divideFace(f1, recursionLevel - 1);
 
 			Face f2 = new Face();
@@ -81,9 +130,10 @@ public class Terrain extends ObjModel {
 			f2.addVertex(face.getVertices().get(1));
 			f2.addVertex(currentSize - 3);
 			f2.addVertex(currentSize);
-			for (int i = 0; i < 4; i++) {
-				f2.addTextureCoordinate(i + 1);
-			}
+			f2.addTextureCoordinate(currentSize - 4);
+			f2.addTextureCoordinate(face.getTextureCoordinates().get(1));
+			f2.addTextureCoordinate(currentSize - 3);
+			f2.addTextureCoordinate(currentSize);
 			divideFace(f2, recursionLevel - 1);
 
 			Face f3 = new Face();
@@ -91,9 +141,10 @@ public class Terrain extends ObjModel {
 			f3.addVertex(currentSize - 3);
 			f3.addVertex(face.getVertices().get(2));
 			f3.addVertex(currentSize - 2);
-			for (int i = 0; i < 4; i++) {
-				f3.addTextureCoordinate(i + 1);
-			}
+			f3.addTextureCoordinate(currentSize);
+			f3.addTextureCoordinate(currentSize - 3);
+			f3.addTextureCoordinate(face.getTextureCoordinates().get(2));
+			f3.addTextureCoordinate(currentSize - 2);
 			divideFace(f3, recursionLevel - 1);
 
 			Face f4 = new Face();
@@ -101,9 +152,10 @@ public class Terrain extends ObjModel {
 			f4.addVertex(currentSize);
 			f4.addVertex(currentSize - 2);
 			f4.addVertex(face.getVertices().get(3));
-			for (int i = 0; i < 4; i++) {
-				f4.addTextureCoordinate(i + 1);
-			}
+			f4.addTextureCoordinate(currentSize - 1);
+			f4.addTextureCoordinate(currentSize);
+			f4.addTextureCoordinate(currentSize - 2);
+			f4.addTextureCoordinate(face.getTextureCoordinates().get(3));
 			divideFace(f4, recursionLevel - 1);
 		} else {
 			faces.add(face);
