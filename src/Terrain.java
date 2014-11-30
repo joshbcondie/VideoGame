@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Terrain extends ObjModel {
 
-	public Terrain(float length, int recursionLevel) {
+	public Terrain(float length, int recursionLevel, float maxDisplacement) {
 
 		vertices = new ArrayList<>();
 		vertices.add(new Vector3f(0, 0, 0));
@@ -27,10 +27,10 @@ public class Terrain extends ObjModel {
 		face.addTextureCoordinate(3);
 		face.addTextureCoordinate(4);
 
-		divideFace(face, recursionLevel);
+		divideFace(face, recursionLevel, maxDisplacement);
 	}
 
-	private void divideFace(Face face, int recursionLevel) {
+	private void divideFace(Face face, int recursionLevel, float maxDisplacement) {
 		if (recursionLevel > 0) {
 			float x = 0;
 			float y = 0;
@@ -43,7 +43,7 @@ public class Terrain extends ObjModel {
 			x /= 4f;
 			// x += (float) (Math.random() * 10 - 5);
 			y /= 4f;
-			y += (float) (Math.random() * 5 - 2.5);
+			y += (float) (Math.random() * maxDisplacement * 2 - maxDisplacement);
 			z /= 4f;
 			// z += (float) (Math.random() * 10 - 5);
 
@@ -123,7 +123,7 @@ public class Terrain extends ObjModel {
 			f1.addTextureCoordinate(currentSize - 4);
 			f1.addTextureCoordinate(currentSize);
 			f1.addTextureCoordinate(currentSize - 1);
-			divideFace(f1, recursionLevel - 1);
+			divideFace(f1, recursionLevel - 1, maxDisplacement);
 
 			Face f2 = new Face();
 			f2.addVertex(currentSize - 4);
@@ -134,7 +134,7 @@ public class Terrain extends ObjModel {
 			f2.addTextureCoordinate(face.getTextureCoordinates().get(1));
 			f2.addTextureCoordinate(currentSize - 3);
 			f2.addTextureCoordinate(currentSize);
-			divideFace(f2, recursionLevel - 1);
+			divideFace(f2, recursionLevel - 1, maxDisplacement);
 
 			Face f3 = new Face();
 			f3.addVertex(currentSize);
@@ -145,7 +145,7 @@ public class Terrain extends ObjModel {
 			f3.addTextureCoordinate(currentSize - 3);
 			f3.addTextureCoordinate(face.getTextureCoordinates().get(2));
 			f3.addTextureCoordinate(currentSize - 2);
-			divideFace(f3, recursionLevel - 1);
+			divideFace(f3, recursionLevel - 1, maxDisplacement);
 
 			Face f4 = new Face();
 			f4.addVertex(currentSize - 1);
@@ -156,7 +156,7 @@ public class Terrain extends ObjModel {
 			f4.addTextureCoordinate(currentSize);
 			f4.addTextureCoordinate(currentSize - 2);
 			f4.addTextureCoordinate(face.getTextureCoordinates().get(3));
-			divideFace(f4, recursionLevel - 1);
+			divideFace(f4, recursionLevel - 1, maxDisplacement);
 		} else {
 			faces.add(face);
 		}

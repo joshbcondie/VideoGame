@@ -64,7 +64,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
 	private static final float SHIP_ROTATION = 0.02f;
-	private static final float SHIP_SPEED = 0.01f;
+	private static final float SHIP_SPEED = 1f;
 
 	private static ObjModel parkingLotModel = null;
 	private static ObjModel arwingModel = null;
@@ -79,7 +79,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static int mouseMovementX = 0;
 	private static int mouseMovementY = 0;
 
-	private static Terrain terrain = new Terrain(10, 2);
+	private static Terrain terrain = new Terrain(1000, 4, 30);
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
