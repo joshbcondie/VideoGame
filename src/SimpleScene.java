@@ -63,7 +63,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
-	private static final float SHIP_ROTATION = 0.02f;
+	private static final float SHIP_ROTATION = 0.005f;
 	private static final float SHIP_SPEED = 1f;
 
 	private static ObjModel parkingLotModel = null;
@@ -147,7 +147,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
 		glu = new GLU(); // get GL Utilities
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set background (clear) color
+		gl.glClearColor(0.53f, 0.81f, 0.92f, 0.0f); // set background (clear) color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
