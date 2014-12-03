@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -63,7 +64,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
-	private static final float SHIP_ROTATION = 0.02f;
+	private static final float SHIP_XY_ROTATION = 0.02f;
+	private static final float SHIP_Z_ROTATION = 0.02f;
 	private static final float SHIP_SPEED = 2f;
 
 	private static ObjModel arwingModel = null;
@@ -76,6 +78,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static int mouseMovementX = 0;
 	private static int mouseMovementY = 0;
+	private static boolean rotatePositiveZ = false;
+	private static boolean rotateNegativeZ = false;
 
 	private static boolean alive = true;
 
@@ -268,15 +272,33 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
-			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION * mouseMovementX);
+			matrix.rotateAbout(arwingYAxis, -SHIP_XY_ROTATION * mouseMovementX);
 			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
 					.normalize();
 
 			matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
-			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION * mouseMovementY);
+			matrix.rotateAbout(arwingXAxis, SHIP_XY_ROTATION * mouseMovementY);
 			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
 					.normalize();
+
+			matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			if (rotatePositiveZ && !rotateNegativeZ) {
+				matrix.rotateAbout(arwingXAxis.crossProduct(arwingYAxis)
+						.normalize(), -SHIP_Z_ROTATION);
+				arwingXAxis = matrix.multiply(new Matrix(arwingXAxis))
+						.toVector3f().normalize();
+				arwingYAxis = matrix.multiply(new Matrix(arwingYAxis))
+						.toVector3f().normalize();
+			} else if (rotateNegativeZ && !rotatePositiveZ) {
+				matrix.rotateAbout(arwingXAxis.crossProduct(arwingYAxis)
+						.normalize(), SHIP_Z_ROTATION);
+				arwingXAxis = matrix.multiply(new Matrix(arwingXAxis))
+						.toVector3f().normalize();
+				arwingYAxis = matrix.multiply(new Matrix(arwingYAxis))
+						.toVector3f().normalize();
+			}
 		}
 	}
 
@@ -294,10 +316,22 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			rotatePositiveZ = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			rotateNegativeZ = true;
+		}
 	}
 
 	@Override
 	public void keyReleased(java.awt.event.KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			rotatePositiveZ = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			rotateNegativeZ = false;
+		}
 	}
 
 	@Override
