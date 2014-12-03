@@ -33,22 +33,16 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 
 /**
  * JOGL 2.0 Program Template (GLCanvas) This is a "Component" which can be added
@@ -56,7 +50,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
  * graphics.
  */
 @SuppressWarnings("serial")
-public class SimpleScene extends GLCanvas implements GLEventListener,
+public class VideoGame extends GLCanvas implements GLEventListener,
 		KeyListener, MouseListener, MouseMotionListener {
 
 	// Define constants for the top-level container
@@ -64,26 +58,14 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
-	private static final float SHIP_XY_ROTATION = 0.02f;
-	private static final float SHIP_Z_ROTATION = 0.02f;
-	private static final float SHIP_SPEED = 2f;
-
-	private static ObjModel arwingModel = null;
-
-	private static Texture arwingTexture = null;
-	private static Texture grassTexture = null;
-
-	private static Vector3f arwingPosition = new Vector3f(500, 50, 500);
-	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
-	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static int mouseMovementX = 0;
 	private static int mouseMovementY = 0;
 	private static boolean rotatePositiveZ = false;
 	private static boolean rotateNegativeZ = false;
 
-	private static boolean alive = true;
+	private static Ship ship;
 
-	private static Terrain terrain = new Terrain(1000, 4, 30);
+	private static Terrain terrain;
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -92,7 +74,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			@Override
 			public void run() {
 				// Create the OpenGL rendering canvas
-				GLCanvas canvas = new SimpleScene();
+				GLCanvas canvas = new VideoGame();
 				canvas.setPreferredSize(new Dimension(CANVAS_WIDTH,
 						CANVAS_HEIGHT));
 				canvas.setCursor(Toolkit.getDefaultToolkit()
@@ -134,7 +116,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private GLU glu; // for the GL Utility
 
 	/** Constructor to setup the GUI for this Component */
-	public SimpleScene() {
+	public VideoGame() {
 		this.addGLEventListener(this);
 		this.addKeyListener(this);
 		this.addMouseListener(this);
@@ -161,23 +143,15 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 																// correction
 		gl.glShadeModel(GL_SMOOTH); // blends colors nicely, and smoothes out
 									// lighting
-		try {
-			arwingTexture = TextureIO.newTexture(new File("arwing.jpg"), false);
-			grassTexture = TextureIO.newTexture(new File("grass.jpg"), false);
-		} catch (GLException | IOException e) {
-			e.printStackTrace();
-		}
+
+		ship = new Ship();
+		terrain = new Terrain(1000, 4, 30);
+
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		try {
-			arwingModel = new ObjModel(new File("arwing.obj"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -223,81 +197,44 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 
 		gl.glRotatef(180, 0, 1, 0);
 		gl.glTranslatef(0, -5, 20);
-		gl.glMultMatrixf(
-				Matrix.reverseChangeOfBasis(arwingXAxis, arwingYAxis,
-						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
-		gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
-				-arwingPosition.getZ());
-		gl.glPushMatrix();
-		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
-		terrain.render(gl);
-		gl.glPopMatrix();
+		gl.glMultMatrixf(ship.reverseChangeOfBasis().toArray(), 0);
+		gl.glTranslatef(-ship.getX(), -ship.getY(), -ship.getZ());
 
-		gl.glTranslatef(arwingPosition.getX(), arwingPosition.getY(),
-				arwingPosition.getZ());
+		terrain.render(gl);
+		gl.glTranslatef(ship.getX(), ship.getY(), ship.getZ());
 		gl.glScalef(0.01f, 0.01f, 0.01f);
-		gl.glMultMatrixf(
-				Matrix.changeOfBasis(arwingXAxis, arwingYAxis,
-						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
-		gl.glBindTexture(GL_TEXTURE_2D, arwingTexture.getTextureObject());
-		if (alive)
-			arwingModel.render(gl);
+		gl.glMultMatrixf(ship.changeOfBasis().toArray(), 0);
+		if (ship.isAlive())
+			ship.render(gl);
 	}
 
 	private void update() {
 
-		if (alive) {
+		if (ship.isAlive()) {
 
-			if (arwingPosition.getY() <= terrain.getHeight(
-					arwingPosition.getX(), arwingPosition.getZ())) {
-				alive = false;
+			if (ship.getY() <= terrain.getHeight(ship.getX(), ship.getZ())) {
+				ship.die();
 				return;
 			}
 
-			arwingPosition.setX(arwingPosition.getX() + SHIP_SPEED
-					* arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
-			arwingPosition.setY(arwingPosition.getY() + SHIP_SPEED
-					* arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
-			arwingPosition.setZ(arwingPosition.getZ() + SHIP_SPEED
-					* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
+			ship.moveForward();
 
-			if (arwingPosition.getX() < 0)
-				arwingPosition.setX(terrain.getLength() - 0.1f);
-			else if (arwingPosition.getX() >= terrain.getLength())
-				arwingPosition.setX(0);
-			if (arwingPosition.getZ() < 0)
-				arwingPosition.setZ(terrain.getLength() - 0.1f);
-			else if (arwingPosition.getZ() >= terrain.getLength())
-				arwingPosition.setZ(0);
+			if (ship.getX() < 0)
+				ship.setX(terrain.getLength() - 0.1f);
+			else if (ship.getX() >= terrain.getLength())
+				ship.setX(0);
+			if (ship.getZ() < 0)
+				ship.setZ(terrain.getLength() - 0.1f);
+			else if (ship.getZ() >= terrain.getLength())
+				ship.setZ(0);
 
-			Matrix matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingYAxis, -SHIP_XY_ROTATION * mouseMovementX);
-			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
-					.normalize();
+			ship.rotateX(mouseMovementX);
+			ship.rotateY(mouseMovementY);
 
-			matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
-			matrix.rotateAbout(arwingXAxis, SHIP_XY_ROTATION * mouseMovementY);
-			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
-					.normalize();
-
-			matrix = new Matrix(4, 4);
-			matrix.loadIdentity();
 			if (rotatePositiveZ && !rotateNegativeZ) {
-				matrix.rotateAbout(arwingXAxis.crossProduct(arwingYAxis)
-						.normalize(), -SHIP_Z_ROTATION);
-				arwingXAxis = matrix.multiply(new Matrix(arwingXAxis))
-						.toVector3f().normalize();
-				arwingYAxis = matrix.multiply(new Matrix(arwingYAxis))
-						.toVector3f().normalize();
+				ship.rotateZ(1);
 			} else if (rotateNegativeZ && !rotatePositiveZ) {
-				matrix.rotateAbout(arwingXAxis.crossProduct(arwingYAxis)
-						.normalize(), SHIP_Z_ROTATION);
-				arwingXAxis = matrix.multiply(new Matrix(arwingXAxis))
-						.toVector3f().normalize();
-				arwingYAxis = matrix.multiply(new Matrix(arwingYAxis))
-						.toVector3f().normalize();
+				ship.rotateZ(-1);
 			}
 		}
 	}

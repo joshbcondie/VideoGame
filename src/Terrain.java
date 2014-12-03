@@ -1,12 +1,29 @@
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLException;
+
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+
 public class Terrain extends ObjModel {
 
+	private Texture grassTexture;
 	private float length;
 	private float[][] heightMap;
 
 	public Terrain(float length, int recursionLevel, float maxDisplacement) {
+
+		try {
+			grassTexture = TextureIO.newTexture(new File("grass.jpg"), false);
+		} catch (GLException | IOException e) {
+			e.printStackTrace();
+		}
 
 		this.length = length;
 		heightMap = new float[(1 << recursionLevel) + 1][(1 << recursionLevel) + 1];
@@ -197,6 +214,12 @@ public class Terrain extends ObjModel {
 		} else {
 			faces.add(face);
 		}
+	}
+
+	@Override
+	public void render(GL2 gl) {
+		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
+		super.render(gl);
 	}
 
 	public float getLength() {
