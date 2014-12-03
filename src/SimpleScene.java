@@ -71,7 +71,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static Texture arwingTexture = null;
 	private static Texture grassTexture = null;
 
-	private static Vector3f arwingPosition = new Vector3f(500, 5, 500);
+	private static Vector3f arwingPosition = new Vector3f(500, 50, 500);
 	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static int mouseMovementX = 0;

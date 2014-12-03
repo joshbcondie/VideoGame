@@ -199,9 +199,24 @@ public class Terrain extends ObjModel {
 		}
 	}
 
+	public float getLength() {
+		return length;
+	}
+
 	public float getHeight(float x, float z) {
-		return heightMap[Math.round((heightMap.length - 1) / length * x)][Math
-				.round((heightMap.length - 1) / length * z)];
+		float gridX = (heightMap.length - 1) / length * x;
+		float gridZ = (heightMap.length - 1) / length * z;
+		return (float) (((heightMap[(int) Math.floor(gridX)][(int) Math
+				.floor(gridZ)] * (1 - (gridX - Math.floor(gridX))) + heightMap[(int) Math
+				.ceil(gridX)][(int) Math.floor(gridZ)]
+				* (gridX - Math.floor(gridX))))
+				* (1 - (gridZ - Math.floor(gridZ))) + ((heightMap[(int) Math
+				.floor(gridX)][(int) Math.ceil(gridZ)]
+				* (1 - (gridX - Math.floor(gridX))) + heightMap[(int) Math
+				.ceil(gridX)][(int) Math.ceil(gridZ)]
+				* (gridX - Math.floor(gridX))))
+				* (gridZ - Math.floor(gridZ)));
+
 	}
 
 	public List<Vector3f> getVertices() {
