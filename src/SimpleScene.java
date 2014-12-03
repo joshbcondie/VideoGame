@@ -257,6 +257,15 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 			arwingPosition.setZ(arwingPosition.getZ() + SHIP_SPEED
 					* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
 
+			if (arwingPosition.getX() < 0)
+				arwingPosition.setX(terrain.getLength() - 0.1f);
+			else if (arwingPosition.getX() >= terrain.getLength())
+				arwingPosition.setX(0);
+			if (arwingPosition.getZ() < 0)
+				arwingPosition.setZ(terrain.getLength() - 0.1f);
+			else if (arwingPosition.getZ() >= terrain.getLength())
+				arwingPosition.setZ(0);
+
 			Matrix matrix = new Matrix(4, 4);
 			matrix.loadIdentity();
 			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION * mouseMovementX);
