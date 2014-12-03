@@ -1,8 +1,15 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Terrain extends ObjModel {
 
+	private float length;
+	private float[][] heightMap;
+
 	public Terrain(float length, int recursionLevel, float maxDisplacement) {
+
+		this.length = length;
+		heightMap = new float[(1 << recursionLevel) + 1][(1 << recursionLevel) + 1];
 
 		vertices = new ArrayList<>();
 		vertices.add(new Vector3f(0, 0, 0));
@@ -51,19 +58,49 @@ public class Terrain extends ObjModel {
 					face.getVertices().get(0) - 1).getX(), (vertices.get(
 					face.getVertices().get(0) - 1).getY() + vertices.get(
 					face.getVertices().get(1) - 1).getY()) / 2, z));
+			heightMap[Math.round((heightMap.length - 1) / length
+					* vertices.get(face.getVertices().get(0) - 1).getX())][Math
+					.round((heightMap.length - 1) / length * z)] = (vertices
+					.get(face.getVertices().get(0) - 1).getY() + vertices.get(
+					face.getVertices().get(1) - 1).getY()) / 2;
+
 			vertices.add(new Vector3f(x, (vertices.get(
 					face.getVertices().get(1) - 1).getY() + vertices.get(
 					face.getVertices().get(2) - 1).getY()) / 2, vertices.get(
 					face.getVertices().get(1) - 1).getZ()));
+			heightMap[Math.round((heightMap.length - 1) / length * x)][Math
+					.round((heightMap.length - 1)
+							/ length
+							* vertices.get(face.getVertices().get(1) - 1)
+									.getZ())] = (vertices.get(
+					face.getVertices().get(1) - 1).getY() + vertices.get(
+					face.getVertices().get(2) - 1).getY()) / 2;
+
 			vertices.add(new Vector3f(vertices.get(
 					face.getVertices().get(2) - 1).getX(), (vertices.get(
 					face.getVertices().get(2) - 1).getY() + vertices.get(
 					face.getVertices().get(3) - 1).getY()) / 2, z));
+			heightMap[Math.round((heightMap.length - 1) / length
+					* vertices.get(face.getVertices().get(2) - 1).getX())][Math
+					.round((heightMap.length - 1) / length * z)] = (vertices
+					.get(face.getVertices().get(2) - 1).getY() + vertices.get(
+					face.getVertices().get(3) - 1).getY()) / 2;
+
 			vertices.add(new Vector3f(x, (vertices.get(
 					face.getVertices().get(3) - 1).getY() + vertices.get(
 					face.getVertices().get(0) - 1).getY()) / 2, vertices.get(
 					face.getVertices().get(3) - 1).getZ()));
+			heightMap[Math.round((heightMap.length - 1) / length * x)][Math
+					.round((heightMap.length - 1)
+							/ length
+							* vertices.get(face.getVertices().get(3) - 1)
+									.getZ())] = (vertices.get(
+					face.getVertices().get(3) - 1).getY() + vertices.get(
+					face.getVertices().get(0) - 1).getY()) / 2;
+
 			vertices.add(new Vector3f(x, y, z));
+			heightMap[Math.round((heightMap.length - 1) / length * x)][Math
+					.round((heightMap.length - 1) / length * z)] = y;
 
 			textureCoordinates
 					.add(new Vector3f(textureCoordinates.get(
@@ -160,5 +197,14 @@ public class Terrain extends ObjModel {
 		} else {
 			faces.add(face);
 		}
+	}
+
+	public float getHeight(float x, float z) {
+		return heightMap[Math.round((heightMap.length - 1) / length * x)][Math
+				.round((heightMap.length - 1) / length * z)];
+	}
+
+	public List<Vector3f> getVertices() {
+		return vertices;
 	}
 }

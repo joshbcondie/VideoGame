@@ -63,21 +63,21 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
-	private static final float SHIP_ROTATION = 0.005f;
-	private static final float SHIP_SPEED = 1f;
+	private static final float SHIP_ROTATION = 0.02f;
+	private static final float SHIP_SPEED = 2f;
 
-	private static ObjModel parkingLotModel = null;
 	private static ObjModel arwingModel = null;
 
 	private static Texture arwingTexture = null;
-	private static Texture parkingLotTexture = null;
 	private static Texture grassTexture = null;
 
-	private static Vector3f arwingPosition = new Vector3f(0, 3, -5);
+	private static Vector3f arwingPosition = new Vector3f(500, 5, 500);
 	private static Vector3f arwingXAxis = new Vector3f(1, 0, 0);
 	private static Vector3f arwingYAxis = new Vector3f(0, 1, 0);
 	private static int mouseMovementX = 0;
 	private static int mouseMovementY = 0;
+
+	private static boolean alive = true;
 
 	private static Terrain terrain = new Terrain(1000, 4, 30);
 
@@ -147,7 +147,8 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
 		glu = new GLU(); // get GL Utilities
-		gl.glClearColor(0.53f, 0.81f, 0.92f, 0.0f); // set background (clear) color
+		gl.glClearColor(0.53f, 0.81f, 0.92f, 0.0f); // set background (clear)
+													// color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
@@ -158,8 +159,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 									// lighting
 		try {
 			arwingTexture = TextureIO.newTexture(new File("arwing.jpg"), false);
-			parkingLotTexture = TextureIO.newTexture(
-					new File("ParkingLot.jpg"), false);
 			grassTexture = TextureIO.newTexture(new File("grass.jpg"), false);
 		} catch (GLException | IOException e) {
 			e.printStackTrace();
@@ -171,7 +170,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		try {
-			parkingLotModel = new ObjModel(new File("ParkingLot.obj"));
 			arwingModel = new ObjModel(new File("arwing.obj"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -226,10 +224,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
 		gl.glTranslatef(-arwingPosition.getX(), -arwingPosition.getY(),
 				-arwingPosition.getZ());
-		gl.glBindTexture(GL_TEXTURE_2D, parkingLotTexture.getTextureObject());
-		parkingLotModel.render(gl);
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 5, 0);
 		gl.glBindTexture(GL_TEXTURE_2D, grassTexture.getTextureObject());
 		terrain.render(gl);
 		gl.glPopMatrix();
@@ -241,29 +236,39 @@ public class SimpleScene extends GLCanvas implements GLEventListener,
 				Matrix.changeOfBasis(arwingXAxis, arwingYAxis,
 						arwingXAxis.crossProduct(arwingYAxis)).toArray(), 0);
 		gl.glBindTexture(GL_TEXTURE_2D, arwingTexture.getTextureObject());
-		arwingModel.render(gl);
+		if (alive)
+			arwingModel.render(gl);
 	}
 
 	private void update() {
 
-		arwingPosition.setX(arwingPosition.getX() + SHIP_SPEED
-				* arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
-		arwingPosition.setY(arwingPosition.getY() + SHIP_SPEED
-				* arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
-		arwingPosition.setZ(arwingPosition.getZ() + SHIP_SPEED
-				* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
+		if (alive) {
 
-		Matrix matrix = new Matrix(4, 4);
-		matrix.loadIdentity();
-		matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION * mouseMovementX);
-		arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
-				.normalize();
+			if (arwingPosition.getY() <= terrain.getHeight(
+					arwingPosition.getX(), arwingPosition.getZ())) {
+				alive = false;
+				return;
+			}
 
-		matrix = new Matrix(4, 4);
-		matrix.loadIdentity();
-		matrix.rotateAbout(arwingXAxis, SHIP_ROTATION * mouseMovementY);
-		arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
-				.normalize();
+			arwingPosition.setX(arwingPosition.getX() + SHIP_SPEED
+					* arwingXAxis.crossProduct(arwingYAxis).normalize().getX());
+			arwingPosition.setY(arwingPosition.getY() + SHIP_SPEED
+					* arwingXAxis.crossProduct(arwingYAxis).normalize().getY());
+			arwingPosition.setZ(arwingPosition.getZ() + SHIP_SPEED
+					* arwingXAxis.crossProduct(arwingYAxis).normalize().getZ());
+
+			Matrix matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingYAxis, -SHIP_ROTATION * mouseMovementX);
+			arwingXAxis = matrix.multiply(new Matrix(arwingXAxis)).toVector3f()
+					.normalize();
+
+			matrix = new Matrix(4, 4);
+			matrix.loadIdentity();
+			matrix.rotateAbout(arwingXAxis, SHIP_ROTATION * mouseMovementY);
+			arwingYAxis = matrix.multiply(new Matrix(arwingYAxis)).toVector3f()
+					.normalize();
+		}
 	}
 
 	/**
