@@ -33,6 +33,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -64,7 +66,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private static boolean rotateNegativeZ = false;
 
 	private static Ship ship;
-	private static Ship enemy;
+	private static List<Ship> enemies = new ArrayList<Ship>();
 
 	private static Terrain terrain;
 
@@ -146,12 +148,18 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 									// lighting
 
 		ship = new Ship();
-//		ship.setSpeed(0.1f);
-		enemy = new Ship();
-		enemy.setSpeed(0);
+		// ship.setSpeed(0.1f);
+		Ship enemy = new Ship();
+		// enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(0, 100, 0));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
 		enemy.setYAxis(new Vector3f(0, 1, 0));
+		enemies.add(enemy);
+		enemy = new Ship();
+		enemy.setPosition(new Vector3f(500, 50, 700));
+		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
+		enemy.setYAxis(new Vector3f(0, 1, 0));
+		enemies.add(enemy);
 		terrain = new Terrain(1000, 4, 30);
 
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -216,13 +224,15 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 			ship.render(gl);
 			gl.glPopMatrix();
 		}
-		if (enemy.isAlive()) {
-			gl.glPushMatrix();
-			gl.glTranslatef(enemy.getX(), enemy.getY(), enemy.getZ());
-			gl.glScalef(0.1f, 0.1f, 0.1f);
-			gl.glMultMatrixf(enemy.changeOfBasis().toArray(), 0);
-			enemy.render(gl);
-			gl.glPopMatrix();
+		for (Ship enemy : enemies) {
+			if (enemy.isAlive()) {
+				gl.glPushMatrix();
+				gl.glTranslatef(enemy.getX(), enemy.getY(), enemy.getZ());
+				gl.glScalef(0.1f, 0.1f, 0.1f);
+				gl.glMultMatrixf(enemy.changeOfBasis().toArray(), 0);
+				enemy.render(gl);
+				gl.glPopMatrix();
+			}
 		}
 	}
 
@@ -255,8 +265,19 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 				ship.rotateZ(-1);
 			}
 		}
-		if (enemy.isAlive()) {
-			enemy.moveForward();
+		for (Ship enemy : enemies) {
+			if (enemy.isAlive()) {
+				enemy.moveForward();
+			}
+
+			if (enemy.getX() < 0)
+				enemy.setX(terrain.getLength() - 0.1f);
+			else if (enemy.getX() >= terrain.getLength())
+				enemy.setX(0);
+			if (enemy.getZ() < 0)
+				enemy.setZ(terrain.getLength() - 0.1f);
+			else if (enemy.getZ() >= terrain.getLength())
+				enemy.setZ(0);
 		}
 	}
 
