@@ -1,4 +1,3 @@
-import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 import static javax.media.opengl.GL2.GL_POLYGON;
 import static javax.media.opengl.GL2GL3.GL_QUADS;
@@ -79,7 +78,6 @@ public class ObjModel {
 	 */
 	public void render(GL2 gl) {
 		for (Face face : faces) {
-			gl.glEnable(GL_TEXTURE_2D);
 			if (face.getVertices().size() == 3) {
 				gl.glBegin(GL_TRIANGLES);
 			} else if (face.getVertices().size() == 4) {
