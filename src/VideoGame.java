@@ -64,6 +64,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private static boolean rotateNegativeZ = false;
 
 	private static Ship ship;
+	private static Ship enemy;
 
 	private static Terrain terrain;
 
@@ -145,6 +146,12 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 									// lighting
 
 		ship = new Ship();
+//		ship.setSpeed(0.1f);
+		enemy = new Ship();
+		enemy.setSpeed(0);
+		enemy.setPosition(new Vector3f(0, 100, 0));
+		enemy.setXAxis(new Vector3f(1, 0, 0));
+		enemy.setYAxis(new Vector3f(0, 1, 0));
 		terrain = new Terrain(1000, 4, 30);
 
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -173,7 +180,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		// Setup perspective projection, with aspect ratio matches viewport
 		gl.glMatrixMode(GL_PROJECTION); // choose projection matrix
 		gl.glLoadIdentity(); // reset projection matrix
-		glu.gluPerspective(45.0, aspect, 0.1, 1000.0); // fovy, aspect, zNear,
+		glu.gluPerspective(45.0, aspect, 0.1, 2000.0); // fovy, aspect, zNear,
 														// zFar
 
 		// Enable the model-view transform
@@ -201,11 +208,22 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		gl.glTranslatef(-ship.getX(), -ship.getY(), -ship.getZ());
 
 		terrain.render(gl);
-		gl.glTranslatef(ship.getX(), ship.getY(), ship.getZ());
-		gl.glScalef(0.01f, 0.01f, 0.01f);
-		gl.glMultMatrixf(ship.changeOfBasis().toArray(), 0);
-		if (ship.isAlive())
+		if (ship.isAlive()) {
+			gl.glPushMatrix();
+			gl.glTranslatef(ship.getX(), ship.getY(), ship.getZ());
+			gl.glScalef(0.01f, 0.01f, 0.01f);
+			gl.glMultMatrixf(ship.changeOfBasis().toArray(), 0);
 			ship.render(gl);
+			gl.glPopMatrix();
+		}
+		if (enemy.isAlive()) {
+			gl.glPushMatrix();
+			gl.glTranslatef(enemy.getX(), enemy.getY(), enemy.getZ());
+			gl.glScalef(0.1f, 0.1f, 0.1f);
+			gl.glMultMatrixf(enemy.changeOfBasis().toArray(), 0);
+			enemy.render(gl);
+			gl.glPopMatrix();
+		}
 	}
 
 	private void update() {
@@ -236,6 +254,9 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 			} else if (rotateNegativeZ && !rotatePositiveZ) {
 				ship.rotateZ(-1);
 			}
+		}
+		if (enemy.isAlive()) {
+			enemy.moveForward();
 		}
 	}
 

@@ -14,11 +14,11 @@ public class Ship {
 
 	private static final float XY_ROTATION_SPEED = 0.02f;
 	private static final float Z_ROTATION_SPEED = 0.02f;
-	private static final float FORWARD_SPEED = 2f;
+	private static Texture texture;
+	private static ObjModel model;
 
 	private boolean isAlive;
-	private Texture texture;
-	private ObjModel model;
+	private float speed;
 	private Vector3f position;
 	private Vector3f xAxis;
 	private Vector3f yAxis;
@@ -26,15 +26,18 @@ public class Ship {
 	public Ship() {
 		isAlive = true;
 		try {
-			texture = TextureIO.newTexture(new File("ship.jpg"), false);
+			if (texture == null)
+				texture = TextureIO.newTexture(new File("ship.jpg"), false);
 		} catch (GLException | IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			model = new ObjModel(new File("ship.obj"));
+			if (model == null)
+				model = new ObjModel(new File("ship.obj"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		speed = 2f;
 		position = new Vector3f(500, 50, 500);
 		xAxis = new Vector3f(1, 0, 0);
 		yAxis = new Vector3f(0, 1, 0);
@@ -46,11 +49,11 @@ public class Ship {
 	}
 
 	public void moveForward() {
-		position.setX(position.getX() + FORWARD_SPEED
+		position.setX(position.getX() + speed
 				* xAxis.crossProduct(yAxis).normalize().getX());
-		position.setY(position.getY() + FORWARD_SPEED
+		position.setY(position.getY() + speed
 				* xAxis.crossProduct(yAxis).normalize().getY());
-		position.setZ(position.getZ() + FORWARD_SPEED
+		position.setZ(position.getZ() + speed
 				* xAxis.crossProduct(yAxis).normalize().getZ());
 	}
 
@@ -116,5 +119,21 @@ public class Ship {
 
 	public void die() {
 		isAlive = false;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
+	}
+
+	public void setPosition(Vector3f position) {
+		this.position = position;
+	}
+
+	public void setXAxis(Vector3f xAxis) {
+		this.xAxis = xAxis;
+	}
+
+	public void setYAxis(Vector3f yAxis) {
+		this.yAxis = yAxis;
 	}
 }
