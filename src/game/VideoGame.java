@@ -152,16 +152,16 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 		terrain = new Terrain(1000, 4, 30);
 
-		ship = new Ship(terrain);
-		// ship.setSpeed(0.1f);
-		Ship enemy = new Ship(terrain);
-		// enemy.setSpeed(0);
+		ship = new Ship(terrain, enemies, -1);
+		 ship.setSpeed(0.5f);
+		Ship enemy = new Ship(terrain, enemies, 0);
+		 enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 100, 600));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
 		enemy.setYAxis(new Vector3f(0, 0, 1));
 		enemies.add(enemy);
-		enemy = new Ship(terrain);
-		// enemy.setSpeed(0);
+		enemy = new Ship(terrain, enemies, 1);
+		 enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 50, 700));
 		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
 		enemy.setYAxis(new Vector3f(0, 1, 0));

@@ -23,10 +23,11 @@ public class Ship extends FlyingObject {
 	private static final float Z_ROTATION_SPEED = 0.02f;
 	private static Texture texture;
 	private static ObjModel model;
-
 	private List<Laser> lasers;
+	private List<Ship> ships;
+	private int index;
 
-	public Ship(Terrain terrain) {
+	public Ship(Terrain terrain, List<Ship> ships, int index) {
 		super(terrain);
 		try {
 			if (texture == null)
@@ -41,6 +42,8 @@ public class Ship extends FlyingObject {
 			e.printStackTrace();
 		}
 		lasers = new ArrayList<>();
+		this.ships = ships;
+		this.index = index;
 	}
 
 	public void shoot() {
@@ -53,8 +56,28 @@ public class Ship extends FlyingObject {
 		lasers.add(laser);
 	}
 
+	private Ship hitsAnyShip() {
+		float dx = 0;
+		float dy = 0;
+		float dz = 0;
+		for (int i = index + 1; i < ships.size(); i++) {
+			dx = ships.get(i).getX() - getX();
+			dy = ships.get(i).getY() - getY();
+			dz = ships.get(i).getZ() - getZ();
+			if (dx * dx + dy * dy + dz * dz <= 25) {
+				return ships.get(i);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void update() {
+		Ship hitShip = hitsAnyShip();
+		if (hitShip != null) {
+			die();
+			hitShip.die();
+		}
 		super.update();
 		if (getX() < 0)
 			setX(terrain.getLength() - 0.1f);
