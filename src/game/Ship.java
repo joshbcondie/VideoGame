@@ -26,6 +26,7 @@ public class Ship extends FlyingObject {
 	private List<Laser> lasers;
 	private List<Ship> ships;
 	private int index;
+	private int timeSinceShot;
 
 	public Ship(Terrain terrain, List<Ship> ships, int index) {
 		super(terrain);
@@ -44,16 +45,20 @@ public class Ship extends FlyingObject {
 		lasers = new ArrayList<>();
 		this.ships = ships;
 		this.index = index;
+		timeSinceShot = 0;
 	}
 
 	public void shoot() {
-		Laser laser = new Laser(terrain, ships, index);
-		laser.setPosition(position.add(xAxis.crossProduct(yAxis).normalize()
-				.scale(3)));
-		laser.setXAxis(xAxis.scale(1));
-		laser.setYAxis(yAxis.scale(1));
-		laser.setSpeed(speed + 5);
-		lasers.add(laser);
+		if (timeSinceShot > 10) {
+			Laser laser = new Laser(terrain, ships, index);
+			laser.setPosition(position.add(xAxis.crossProduct(yAxis)
+					.normalize().scale(3)));
+			laser.setXAxis(xAxis.scale(1));
+			laser.setYAxis(yAxis.scale(1));
+			laser.setSpeed(speed + 5);
+			lasers.add(laser);
+			timeSinceShot = 0;
+		}
 	}
 
 	private Ship hitsAnyShip() {
@@ -73,6 +78,7 @@ public class Ship extends FlyingObject {
 
 	@Override
 	public void update() {
+		timeSinceShot++;
 		Ship hitShip = hitsAnyShip();
 		if (hitShip != null) {
 			die();
