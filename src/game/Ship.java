@@ -52,7 +52,7 @@ public class Ship extends FlyingObject {
 				.scale(3)));
 		laser.setXAxis(xAxis.scale(1));
 		laser.setYAxis(yAxis.scale(1));
-		laser.setSpeed(speed + 2);
+		laser.setSpeed(speed + 5);
 		lasers.add(laser);
 	}
 
