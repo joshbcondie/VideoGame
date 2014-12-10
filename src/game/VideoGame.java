@@ -37,6 +37,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -71,6 +72,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private static List<Ship> ships = new ArrayList<Ship>();
 
 	private static Terrain terrain;
+
+	private static final Random random = new Random();
 
 	/** The entry main() method to setup the top-level container and animator */
 	public static void main(String[] args) {
@@ -155,18 +158,17 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		ship = new Ship(terrain, ships, 0);
 		ship.setSpeed(2);
 		ships.add(ship);
-		Ship enemy = new Ship(terrain, ships, 1);
-		enemy.setSpeed(0);
-		enemy.setPosition(new Vector3f(500, 100, 600));
-		enemy.setXAxis(new Vector3f(1, 0, 0));
-		enemy.setYAxis(new Vector3f(0, 0, 1));
-		ships.add(enemy);
-		enemy = new Ship(terrain, ships, 2);
-		enemy.setSpeed(0);
-		enemy.setPosition(new Vector3f(500, 50, 700));
-		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
-		enemy.setYAxis(new Vector3f(0, 1, 0));
-		ships.add(enemy);
+		for (int i = 0; i < 50; i++) {
+			Ship enemy = new Ship(terrain, ships, i + 1);
+			enemy.setSpeed(random.nextFloat() * 4);
+			enemy.setPosition(new Vector3f(random.nextFloat() * 1000, random
+					.nextFloat() * 100, random.nextFloat() * 1000));
+			enemy.setXAxis(new Vector3f(random.nextFloat() - 0.5f, random
+					.nextFloat() - 0.5f, random.nextFloat() - 0.5f).normalize());
+			enemy.setYAxis(new Vector3f(random.nextFloat() - 0.5f, random
+					.nextFloat() - 0.5f, random.nextFloat() - 0.5f).normalize());
+			ships.add(enemy);
+		}
 
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -270,7 +272,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 			Ship enemy = ships.get(i);
 			if (enemy.isAlive()) {
 				enemy.update();
-				if (Math.random() < 0.03)
+				if (random.nextDouble() < 0.03)
 					enemy.shoot();
 			}
 			enemy.updateLasers();
