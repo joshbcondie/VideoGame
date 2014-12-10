@@ -263,6 +263,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		for (Ship enemy : enemies) {
 			if (enemy.isAlive()) {
 				enemy.moveForward();
+				if (Math.random() < 0.03)
+					enemy.shoot();
 
 				if (enemy.getX() < 0)
 					enemy.setX(terrain.getLength() - 0.1f);
