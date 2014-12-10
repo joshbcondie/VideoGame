@@ -32,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -56,15 +55,15 @@ import com.jogamp.opengl.util.FPSAnimator;
  */
 @SuppressWarnings("serial")
 public class VideoGame extends GLCanvas implements GLEventListener,
-		KeyListener, MouseListener, MouseMotionListener {
+		KeyListener, MouseListener {
 
 	// Define constants for the top-level container
 	private static String TITLE = "Video Game"; // window's title
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 
-	private static int mouseMovementX = 0;
-	private static int mouseMovementY = 0;
+	private static double lastMouseX;
+	private static double lastMouseY;
 	private static boolean rotatePositiveZ = false;
 	private static boolean rotateNegativeZ = false;
 
@@ -92,6 +91,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 				// Create the top-level container
 				final JFrame frame = new JFrame(); // Swing's JFrame or AWT's
 													// Frame
+				frame.setExtendedState(frame.getExtendedState()
+						| JFrame.MAXIMIZED_BOTH);
 				frame.getContentPane().add(canvas);
 				frame.addWindowListener(new WindowAdapter() {
 					@Override
@@ -126,7 +127,6 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		this.addGLEventListener(this);
 		this.addKeyListener(this);
 		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
 	}
 
 	// ------ Implement methods declared in GLEventListener ------
@@ -237,8 +237,27 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		if (ship.isAlive()) {
 			ship.update();
 
-			ship.rotateX(mouseMovementX);
-			ship.rotateY(mouseMovementY);
+			double currentMouseX = MouseInfo.getPointerInfo().getLocation()
+					.getX();
+			double currentMouseY = MouseInfo.getPointerInfo().getLocation()
+					.getY();
+			ship.rotateX((float) (currentMouseX - lastMouseX));
+			ship.rotateY((float) (currentMouseY - lastMouseY));
+
+			Window window = SwingUtilities.getWindowAncestor(this);
+			if (currentMouseX < 20 || window.getWidth() - currentMouseX < 20
+					|| currentMouseY < 20
+					|| window.getHeight() - currentMouseY < 20) {
+				try {
+					new Robot().mouseMove(
+							window.getX() + window.getWidth() / 2,
+							window.getY() + window.getHeight() / 2);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+			lastMouseX = MouseInfo.getPointerInfo().getLocation().getX();
+			lastMouseY = MouseInfo.getPointerInfo().getLocation().getY();
 
 			if (rotatePositiveZ && !rotateNegativeZ) {
 				ship.rotateZ(1);
@@ -258,23 +277,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		}
 	}
 
-	/**
-	 * Called back before the OpenGL context is destroyed. Release resource such
-	 * as buffers.
-	 */
-	@Override
-	public void dispose(GLAutoDrawable drawable) {
-	}
-
-	@Override
-	public void keyTyped(java.awt.event.KeyEvent e) {
-	}
-
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			ship.shoot();
-		}
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			rotatePositiveZ = true;
 		}
@@ -294,11 +298,20 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
+		ship.shoot();
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void dispose(GLAutoDrawable drawable) {
+	}
+
+	@Override
+	public void keyTyped(java.awt.event.KeyEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
 	}
 
 	@Override
@@ -307,35 +320,9 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		try {
-			Window window = SwingUtilities.getWindowAncestor(this);
-			new Robot().mouseMove(window.getX() + window.getWidth() / 2,
-					window.getY() + window.getHeight() / 2);
-		} catch (AWTException e1) {
-			e1.printStackTrace();
-		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		try {
-			Window window = SwingUtilities.getWindowAncestor(this);
-			mouseMovementX = (int) (MouseInfo.getPointerInfo().getLocation()
-					.getX() - (window.getX() + window.getWidth() / 2));
-			mouseMovementY = (int) (MouseInfo.getPointerInfo().getLocation()
-					.getY() - (window.getY() + window.getHeight() / 2));
-			new Robot().mouseMove(window.getX() + window.getWidth() / 2,
-					window.getY() + window.getHeight() / 2);
-		} catch (AWTException e1) {
-			e1.printStackTrace();
-		}
 	}
 }
