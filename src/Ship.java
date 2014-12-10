@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.media.opengl.GL2;
@@ -62,9 +63,13 @@ public class Ship extends FlyingObject {
 	}
 
 	public void updateLasers() {
-		for (Laser laser : lasers) {
+		Iterator<Laser> iterator = lasers.iterator();
+		while (iterator.hasNext()) {
+			Laser laser = iterator.next();
 			if (laser.isAlive())
 				laser.update();
+			else
+				iterator.remove();
 		}
 	}
 
