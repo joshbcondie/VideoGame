@@ -3,6 +3,8 @@ import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLException;
@@ -17,6 +19,8 @@ public class Ship extends FlyingObject {
 	private static Texture texture;
 	private static ObjModel model;
 
+	private List<Laser> lasers;
+
 	public Ship() {
 		super();
 		try {
@@ -30,6 +34,22 @@ public class Ship extends FlyingObject {
 				model = new ObjModel(new File("ship.obj"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+		lasers = new ArrayList<>();
+	}
+
+	public void shoot() {
+		Laser laser = new Laser();
+		laser.setPosition(position.scale(1));
+		laser.setXAxis(xAxis.scale(1));
+		laser.setYAxis(yAxis.scale(1));
+		laser.setSpeed(speed + 2);
+		lasers.add(laser);
+	}
+
+	public void moveLasers() {
+		for (Laser laser : lasers) {
+			laser.moveForward();
 		}
 	}
 
@@ -64,5 +84,11 @@ public class Ship extends FlyingObject {
 		gl.glBindTexture(GL_TEXTURE_2D, texture.getTextureObject());
 		model.render(gl);
 		gl.glPopMatrix();
+	}
+
+	public void renderLasers(GL2 gl) {
+		for (Laser laser : lasers) {
+			laser.render(gl);
+		}
 	}
 }

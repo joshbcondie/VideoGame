@@ -221,10 +221,12 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		if (ship.isAlive()) {
 			ship.render(gl);
 		}
+		ship.renderLasers(gl);
 		for (Ship enemy : enemies) {
 			if (enemy.isAlive()) {
 				enemy.render(gl);
 			}
+			enemy.renderLasers(gl);
 		}
 	}
 
@@ -257,19 +259,21 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 				ship.rotateZ(-1);
 			}
 		}
+		ship.moveLasers();
 		for (Ship enemy : enemies) {
 			if (enemy.isAlive()) {
 				enemy.moveForward();
-			}
 
-			if (enemy.getX() < 0)
-				enemy.setX(terrain.getLength() - 0.1f);
-			else if (enemy.getX() >= terrain.getLength())
-				enemy.setX(0);
-			if (enemy.getZ() < 0)
-				enemy.setZ(terrain.getLength() - 0.1f);
-			else if (enemy.getZ() >= terrain.getLength())
-				enemy.setZ(0);
+				if (enemy.getX() < 0)
+					enemy.setX(terrain.getLength() - 0.1f);
+				else if (enemy.getX() >= terrain.getLength())
+					enemy.setX(0);
+				if (enemy.getZ() < 0)
+					enemy.setZ(terrain.getLength() - 0.1f);
+				else if (enemy.getZ() >= terrain.getLength())
+					enemy.setZ(0);
+			}
+			enemy.moveLasers();
 		}
 	}
 
@@ -287,6 +291,9 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void keyPressed(java.awt.event.KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			ship.shoot();
+		}
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			rotatePositiveZ = true;
 		}

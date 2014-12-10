@@ -11,18 +11,10 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 
 public class Laser extends Ship {
-
-	private static Texture texture;
 	private static ObjModel model;
 
 	public Laser() {
 		super();
-		try {
-			if (texture == null)
-				texture = TextureIO.newTexture(new File("ship.jpg"), false);
-		} catch (GLException | IOException e) {
-			e.printStackTrace();
-		}
 		try {
 			if (model == null)
 				model = new ObjModel(new File("laser.obj"));
@@ -35,7 +27,7 @@ public class Laser extends Ship {
 	public void render(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glTranslatef(getX(), getY(), getZ());
-		 gl.glScalef(10f, 10f, 10f);
+//		gl.glScalef(10f, 10f, 10f);
 		gl.glMultMatrixf(changeOfBasis().toArray(), 0);
 		gl.glColor3f(1f, 0f, 0f);
 		gl.glDisable(GL_TEXTURE_2D);
