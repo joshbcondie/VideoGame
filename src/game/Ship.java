@@ -47,7 +47,7 @@ public class Ship extends FlyingObject {
 	}
 
 	public void shoot() {
-		Laser laser = new Laser(terrain);
+		Laser laser = new Laser(terrain, ships, index);
 		laser.setPosition(position.add(xAxis.crossProduct(yAxis).normalize()
 				.scale(3)));
 		laser.setXAxis(xAxis.scale(1));

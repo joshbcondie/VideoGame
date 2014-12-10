@@ -69,7 +69,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private static boolean rotateNegativeZ = false;
 
 	private static Ship ship;
-	private static List<Ship> enemies = new ArrayList<Ship>();
+	private static List<Ship> ships = new ArrayList<Ship>();
 
 	private static Terrain terrain;
 
@@ -152,20 +152,21 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 		terrain = new Terrain(1000, 4, 30);
 
-		ship = new Ship(terrain, enemies, -1);
-		 ship.setSpeed(0.5f);
-		Ship enemy = new Ship(terrain, enemies, 0);
-		 enemy.setSpeed(0);
+		ship = new Ship(terrain, ships, 0);
+		ship.setSpeed(0);
+		ships.add(ship);
+		Ship enemy = new Ship(terrain, ships, 1);
+		enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 100, 600));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
 		enemy.setYAxis(new Vector3f(0, 0, 1));
-		enemies.add(enemy);
-		enemy = new Ship(terrain, enemies, 1);
-		 enemy.setSpeed(0);
+		ships.add(enemy);
+		enemy = new Ship(terrain, ships, 2);
+		enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 50, 700));
 		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
 		enemy.setYAxis(new Vector3f(0, 1, 0));
-		enemies.add(enemy);
+		ships.add(enemy);
 
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -222,15 +223,12 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		gl.glTranslatef(-ship.getX(), -ship.getY(), -ship.getZ());
 
 		terrain.render(gl);
-		if (ship.isAlive()) {
-			ship.render(gl);
-		}
-		ship.renderLasers(gl);
-		for (Ship enemy : enemies) {
-			if (enemy.isAlive()) {
-				enemy.render(gl);
+
+		for (Ship ship : ships) {
+			if (ship.isAlive()) {
+				ship.render(gl);
 			}
-			enemy.renderLasers(gl);
+			ship.renderLasers(gl);
 		}
 	}
 
@@ -249,7 +247,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 			}
 		}
 		ship.updateLasers();
-		for (Ship enemy : enemies) {
+		for (int i = 1; i < ships.size(); i++) {
+			Ship enemy = ships.get(i);
 			if (enemy.isAlive()) {
 				enemy.update();
 				if (Math.random() < 0.03)

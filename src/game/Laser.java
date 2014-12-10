@@ -5,13 +5,17 @@ import game.obj.ObjModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import javax.media.opengl.GL2;
 
 public class Laser extends FlyingObject {
 	private static ObjModel model;
 
-	public Laser(Terrain terrain) {
+	private List<Ship> ships;
+	private int shipIndex;
+
+	public Laser(Terrain terrain, List<Ship> ships, int shipIndex) {
 		super(terrain);
 		try {
 			if (model == null)
@@ -19,10 +23,34 @@ public class Laser extends FlyingObject {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		this.ships = ships;
+		this.shipIndex = shipIndex;
+	}
+
+	private Ship hitsAnyShip() {
+		float dx = 0;
+		float dy = 0;
+		float dz = 0;
+		for (int i = 0; i < ships.size(); i++) {
+			if (i == shipIndex)
+				continue;
+			dx = ships.get(i).getX() - getX();
+			dy = ships.get(i).getY() - getY();
+			dz = ships.get(i).getZ() - getZ();
+			if (dx * dx + dy * dy + dz * dz <= 10) {
+				return ships.get(i);
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void update() {
+		Ship hitShip = hitsAnyShip();
+		if (hitShip != null) {
+			die();
+			hitShip.die();
+		}
 		if (getX() < 0 || getX() >= terrain.getLength() || getZ() < 0
 				|| getZ() >= terrain.getLength())
 			die();
