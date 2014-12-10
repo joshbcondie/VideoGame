@@ -1,4 +1,8 @@
+package game;
+
 import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import game.math.Matrix;
+import game.obj.ObjModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;

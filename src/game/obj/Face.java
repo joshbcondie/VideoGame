@@ -1,3 +1,5 @@
+package game.obj;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,9 @@
+package game;
+
 import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import game.math.Vector3f;
+import game.obj.Face;
+import game.obj.ObjModel;
 
 import java.io.File;
 import java.io.IOException;

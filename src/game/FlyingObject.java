@@ -1,3 +1,8 @@
+package game;
+
+import game.math.Matrix;
+import game.math.Vector3f;
+
 public abstract class FlyingObject {
 
 	protected boolean isAlive;

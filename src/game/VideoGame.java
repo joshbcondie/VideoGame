@@ -1,3 +1,5 @@
+package game;
+
 import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
 import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
 import static javax.media.opengl.GL.GL_DEPTH_TEST;
@@ -17,6 +19,7 @@ import static javax.media.opengl.GL2ES1.GL_TEXTURE_ENV_MODE;
 import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
+import game.math.Vector3f;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -150,15 +153,15 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		terrain = new Terrain(1000, 4, 30);
 
 		ship = new Ship(terrain);
-//		ship.setSpeed(0.1f);
+		// ship.setSpeed(0.1f);
 		Ship enemy = new Ship(terrain);
-//		enemy.setSpeed(0);
+		// enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 100, 600));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
 		enemy.setYAxis(new Vector3f(0, 0, 1));
 		enemies.add(enemy);
 		enemy = new Ship(terrain);
-//		enemy.setSpeed(0);
+		// enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 50, 700));
 		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
 		enemy.setYAxis(new Vector3f(0, 1, 0));

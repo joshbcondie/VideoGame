@@ -1,3 +1,5 @@
+package game.math;
+
 public class Vector3f {
 
 	private float x;

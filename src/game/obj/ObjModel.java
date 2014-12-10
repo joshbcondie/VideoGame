@@ -1,6 +1,9 @@
+package game.obj;
+
 import static javax.media.opengl.GL.GL_TRIANGLES;
 import static javax.media.opengl.GL2.GL_POLYGON;
 import static javax.media.opengl.GL2GL3.GL_QUADS;
+import game.math.Vector3f;
 
 import java.io.File;
 import java.io.FileNotFoundException;

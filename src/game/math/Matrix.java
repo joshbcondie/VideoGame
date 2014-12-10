@@ -1,3 +1,5 @@
+package game.math;
+
 public class Matrix {
 
 	private float[][] values;
