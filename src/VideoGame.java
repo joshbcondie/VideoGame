@@ -148,14 +148,15 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 									// lighting
 
 		ship = new Ship();
-		// ship.setSpeed(0.1f);
+		ship.setSpeed(0.1f);
 		Ship enemy = new Ship();
-		// enemy.setSpeed(0);
-		enemy.setPosition(new Vector3f(0, 100, 0));
+		enemy.setSpeed(0);
+		enemy.setPosition(new Vector3f(500, 100, 600));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
-		enemy.setYAxis(new Vector3f(0, 1, 0));
+		enemy.setYAxis(new Vector3f(0, 0, 1));
 		enemies.add(enemy);
 		enemy = new Ship();
+		enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 50, 700));
 		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
 		enemy.setYAxis(new Vector3f(0, 1, 0));
@@ -218,21 +219,11 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 		terrain.render(gl);
 		if (ship.isAlive()) {
-			gl.glPushMatrix();
-			gl.glTranslatef(ship.getX(), ship.getY(), ship.getZ());
-			gl.glScalef(0.01f, 0.01f, 0.01f);
-			gl.glMultMatrixf(ship.changeOfBasis().toArray(), 0);
 			ship.render(gl);
-			gl.glPopMatrix();
 		}
 		for (Ship enemy : enemies) {
 			if (enemy.isAlive()) {
-				gl.glPushMatrix();
-				gl.glTranslatef(enemy.getX(), enemy.getY(), enemy.getZ());
-				gl.glScalef(0.1f, 0.1f, 0.1f);
-				gl.glMultMatrixf(enemy.changeOfBasis().toArray(), 0);
 				enemy.render(gl);
-				gl.glPopMatrix();
 			}
 		}
 	}
