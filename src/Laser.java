@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 
 import javax.media.opengl.GL2;
 
-public class Laser extends Ship {
+public class Laser extends FlyingObject {
 	private static ObjModel model;
 
-	public Laser() {
-		super();
+	public Laser(Terrain terrain) {
+		super(terrain);
 		try {
 			if (model == null)
 				model = new ObjModel(new File("laser.obj"));
@@ -19,6 +19,13 @@ public class Laser extends Ship {
 	}
 
 	@Override
+	public void update() {
+		if (getX() < 0 || getX() >= terrain.getLength() || getZ() < 0
+				|| getZ() >= terrain.getLength())
+			die();
+		super.update();
+	}
+
 	public void render(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glTranslatef(getX(), getY(), getZ());

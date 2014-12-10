@@ -21,8 +21,8 @@ public class Ship extends FlyingObject {
 
 	private List<Laser> lasers;
 
-	public Ship() {
-		super();
+	public Ship(Terrain terrain) {
+		super(terrain);
 		try {
 			if (texture == null)
 				texture = TextureIO.newTexture(new File("ship.jpg"), false);
@@ -39,7 +39,7 @@ public class Ship extends FlyingObject {
 	}
 
 	public void shoot() {
-		Laser laser = new Laser();
+		Laser laser = new Laser(terrain);
 		laser.setPosition(position.add(xAxis.crossProduct(yAxis).normalize()
 				.scale(3)));
 		laser.setXAxis(xAxis.scale(1));
@@ -48,9 +48,23 @@ public class Ship extends FlyingObject {
 		lasers.add(laser);
 	}
 
-	public void moveLasers() {
+	@Override
+	public void update() {
+		super.update();
+		if (getX() < 0)
+			setX(terrain.getLength() - 0.1f);
+		else if (getX() >= terrain.getLength())
+			setX(0);
+		if (getZ() < 0)
+			setZ(terrain.getLength() - 0.1f);
+		else if (getZ() >= terrain.getLength())
+			setZ(0);
+	}
+
+	public void updateLasers() {
 		for (Laser laser : lasers) {
-			laser.moveForward();
+			if (laser.isAlive())
+				laser.update();
 		}
 	}
 
@@ -89,7 +103,8 @@ public class Ship extends FlyingObject {
 
 	public void renderLasers(GL2 gl) {
 		for (Laser laser : lasers) {
-			laser.render(gl);
+			if (laser.isAlive())
+				laser.render(gl);
 		}
 	}
 }

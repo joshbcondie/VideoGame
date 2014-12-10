@@ -5,16 +5,22 @@ public abstract class FlyingObject {
 	protected Vector3f position;
 	protected Vector3f xAxis;
 	protected Vector3f yAxis;
+	protected Terrain terrain;
 
-	public FlyingObject() {
+	public FlyingObject(Terrain terrain) {
 		isAlive = true;
 		speed = 2f;
 		position = new Vector3f(500, 50, 500);
 		xAxis = new Vector3f(1, 0, 0);
 		yAxis = new Vector3f(0, 1, 0);
+		this.terrain = terrain;
 	}
 
-	public void moveForward() {
+	public void update() {
+		if (getY() <= terrain.getHeight(getX(), getZ())) {
+			die();
+			return;
+		}
 		position.setX(position.getX() + speed
 				* xAxis.crossProduct(yAxis).normalize().getX());
 		position.setY(position.getY() + speed

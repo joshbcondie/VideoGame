@@ -227,8 +227,10 @@ public class Terrain extends ObjModel {
 	}
 
 	public float getHeight(float x, float z) {
-		float gridX = (heightMap.length - 1) / length * x;
-		float gridZ = (heightMap.length - 1) / length * z;
+		float gridX = Math.max(0, Math.min((heightMap.length - 1) / length * x,
+				heightMap.length - 1));
+		float gridZ = Math.max(0, Math.min((heightMap.length - 1) / length * z,
+				heightMap.length - 1));
 		return (float) (((heightMap[(int) Math.floor(gridX)][(int) Math
 				.floor(gridZ)] * (1 - (gridX - Math.floor(gridX))) + heightMap[(int) Math
 				.ceil(gridX)][(int) Math.floor(gridZ)]

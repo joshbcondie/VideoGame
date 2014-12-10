@@ -147,21 +147,22 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		gl.glShadeModel(GL_SMOOTH); // blends colors nicely, and smoothes out
 									// lighting
 
-		ship = new Ship();
-		ship.setSpeed(0.1f);
-		Ship enemy = new Ship();
-		enemy.setSpeed(0);
+		terrain = new Terrain(1000, 4, 30);
+
+		ship = new Ship(terrain);
+//		ship.setSpeed(0.1f);
+		Ship enemy = new Ship(terrain);
+//		enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 100, 600));
 		enemy.setXAxis(new Vector3f(1, 0, 0));
 		enemy.setYAxis(new Vector3f(0, 0, 1));
 		enemies.add(enemy);
-		enemy = new Ship();
-		enemy.setSpeed(0);
+		enemy = new Ship(terrain);
+//		enemy.setSpeed(0);
 		enemy.setPosition(new Vector3f(500, 50, 700));
 		enemy.setXAxis(new Vector3f(-1, 0, -1).normalize());
 		enemy.setYAxis(new Vector3f(0, 1, 0));
 		enemies.add(enemy);
-		terrain = new Terrain(1000, 4, 30);
 
 		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -233,22 +234,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private void update() {
 
 		if (ship.isAlive()) {
-
-			if (ship.getY() <= terrain.getHeight(ship.getX(), ship.getZ())) {
-				ship.die();
-				return;
-			}
-
-			ship.moveForward();
-
-			if (ship.getX() < 0)
-				ship.setX(terrain.getLength() - 0.1f);
-			else if (ship.getX() >= terrain.getLength())
-				ship.setX(0);
-			if (ship.getZ() < 0)
-				ship.setZ(terrain.getLength() - 0.1f);
-			else if (ship.getZ() >= terrain.getLength())
-				ship.setZ(0);
+			ship.update();
 
 			ship.rotateX(mouseMovementX);
 			ship.rotateY(mouseMovementY);
@@ -259,23 +245,14 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 				ship.rotateZ(-1);
 			}
 		}
-		ship.moveLasers();
+		ship.updateLasers();
 		for (Ship enemy : enemies) {
 			if (enemy.isAlive()) {
-				enemy.moveForward();
+				enemy.update();
 				if (Math.random() < 0.03)
 					enemy.shoot();
-
-				if (enemy.getX() < 0)
-					enemy.setX(terrain.getLength() - 0.1f);
-				else if (enemy.getX() >= terrain.getLength())
-					enemy.setX(0);
-				if (enemy.getZ() < 0)
-					enemy.setZ(terrain.getLength() - 0.1f);
-				else if (enemy.getZ() >= terrain.getLength())
-					enemy.setZ(0);
 			}
-			enemy.moveLasers();
+			enemy.updateLasers();
 		}
 	}
 
