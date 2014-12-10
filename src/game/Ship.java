@@ -49,7 +49,7 @@ public class Ship extends FlyingObject {
 	}
 
 	public void shoot() {
-		if (timeSinceShot > 10) {
+		if (timeSinceShot > 5) {
 			Laser laser = new Laser(terrain, ships, index);
 			laser.setPosition(position.add(xAxis.crossProduct(yAxis)
 					.normalize().scale(3)));
@@ -66,10 +66,12 @@ public class Ship extends FlyingObject {
 		float dy = 0;
 		float dz = 0;
 		for (int i = index + 1; i < ships.size(); i++) {
+			if (!ships.get(i).isAlive())
+				continue;
 			dx = ships.get(i).getX() - getX();
 			dy = ships.get(i).getY() - getY();
 			dz = ships.get(i).getZ() - getZ();
-			if (dx * dx + dy * dy + dz * dz <= 25) {
+			if (dx * dx + dy * dy + dz * dz <= 10) {
 				return ships.get(i);
 			}
 		}

@@ -32,7 +32,7 @@ public class Laser extends FlyingObject {
 		float dy = 0;
 		float dz = 0;
 		for (int i = 0; i < ships.size(); i++) {
-			if (i == shipIndex)
+			if (i == shipIndex || !ships.get(i).isAlive())
 				continue;
 			dx = ships.get(i).getX() - getX();
 			dy = ships.get(i).getY() - getY();

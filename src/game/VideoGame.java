@@ -153,7 +153,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		terrain = new Terrain(1000, 4, 30);
 
 		ship = new Ship(terrain, ships, 0);
-		ship.setSpeed(0);
+		ship.setSpeed(2);
 		ships.add(ship);
 		Ship enemy = new Ship(terrain, ships, 1);
 		enemy.setSpeed(0);
@@ -299,7 +299,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		ship.shoot();
+		if (ship.isAlive())
+			ship.shoot();
 	}
 
 	@Override
