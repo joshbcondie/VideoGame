@@ -16,6 +16,7 @@ import static javax.media.opengl.GL2ES1.GL_DECAL;
 import static javax.media.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static javax.media.opengl.GL2ES1.GL_TEXTURE_ENV;
 import static javax.media.opengl.GL2ES1.GL_TEXTURE_ENV_MODE;
+import static javax.media.opengl.GL2GL3.GL_QUADS;
 import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
@@ -68,7 +69,7 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 	private static boolean rotatePositiveZ = false;
 	private static boolean rotateNegativeZ = false;
 
-	private static Ship ship;
+	private static Ship playerShip;
 	private static List<Ship> ships = new ArrayList<Ship>();
 
 	private static Terrain terrain;
@@ -155,12 +156,12 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 		terrain = new Terrain(1000, 4, 30);
 
-		ship = new Ship(terrain, ships, 0);
-		ship.setSpeed(2);
-		ships.add(ship);
-		for (int i = 0; i < 50; i++) {
+		playerShip = new Ship(terrain, ships, 0);
+		playerShip.setSpeed(2);
+		ships.add(playerShip);
+		for (int i = 0; i < 200; i++) {
 			Ship enemy = new Ship(terrain, ships, i + 1);
-			enemy.setSpeed(random.nextFloat() * 4);
+			enemy.setSpeed(random.nextFloat() * 4 + 0.1f);
 			enemy.setPosition(new Vector3f(random.nextFloat() * 1000, random
 					.nextFloat() * 100, random.nextFloat() * 1000));
 			enemy.setXAxis(new Vector3f(random.nextFloat() - 0.5f, random
@@ -219,32 +220,59 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 																// buffers
 		gl.glLoadIdentity(); // reset the model-view matrix
 
+		gl.glPushMatrix();
+
 		gl.glRotatef(180, 0, 1, 0);
 		gl.glTranslatef(0, -5, 20);
-		gl.glMultMatrixf(ship.reverseChangeOfBasis().toArray(), 0);
-		gl.glTranslatef(-ship.getX(), -ship.getY(), -ship.getZ());
+		gl.glMultMatrixf(playerShip.reverseChangeOfBasis().toArray(), 0);
+		gl.glTranslatef(-playerShip.getX(), -playerShip.getY(),
+				-playerShip.getZ());
 
 		terrain.render(gl);
 
-		for (Ship ship : ships) {
-			if (ship.isAlive()) {
-				ship.render(gl);
+		for (Ship s : ships) {
+			if (s.isAlive()) {
+				s.render(gl);
 			}
-			ship.renderLasers(gl);
+			s.renderLasers(gl);
 		}
+
+		gl.glPopMatrix();
+
+		// Cross-hairs
+		gl.glPushMatrix();
+		gl.glDisable(GL_TEXTURE_2D);
+		gl.glScalef(0.01f, 0.01f, 1);
+		gl.glTranslatef(0, -1f, 0);
+		gl.glColor3f(1, 0, 0);
+
+		gl.glBegin(GL_QUADS);
+		gl.glVertex3f(-0.1f, -0.5f, -1);
+		gl.glVertex3f(-0.1f, 0.5f, -1);
+		gl.glVertex3f(0.1f, 0.5f, -1);
+		gl.glVertex3f(0.1f, -0.5f, -1);
+		
+		gl.glVertex3f(-0.5f, -0.1f, -1);
+		gl.glVertex3f(-0.5f, 0.1f, -1);
+		gl.glVertex3f(0.5f, 0.1f, -1);
+		gl.glVertex3f(0.5f, -0.1f, -1);
+		gl.glEnd();
+
+		gl.glEnable(GL_TEXTURE_2D);
+		gl.glPopMatrix();
 	}
 
 	private void update() {
 
-		if (ship.isAlive()) {
-			ship.update();
+		if (playerShip.isAlive()) {
+			playerShip.update();
 
 			double currentMouseX = MouseInfo.getPointerInfo().getLocation()
 					.getX();
 			double currentMouseY = MouseInfo.getPointerInfo().getLocation()
 					.getY();
-			ship.rotateX((float) (currentMouseX - lastMouseX));
-			ship.rotateY((float) (currentMouseY - lastMouseY));
+			playerShip.rotateX((float) (currentMouseX - lastMouseX));
+			playerShip.rotateY((float) (currentMouseY - lastMouseY));
 
 			Window window = SwingUtilities.getWindowAncestor(this);
 			if (currentMouseX < 20 || window.getWidth() - currentMouseX < 20
@@ -262,12 +290,12 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 			lastMouseY = MouseInfo.getPointerInfo().getLocation().getY();
 
 			if (rotatePositiveZ && !rotateNegativeZ) {
-				ship.rotateZ(1);
+				playerShip.rotateZ(1);
 			} else if (rotateNegativeZ && !rotatePositiveZ) {
-				ship.rotateZ(-1);
+				playerShip.rotateZ(-1);
 			}
 		}
-		ship.updateLasers();
+		playerShip.updateLasers();
 		for (int i = 1; i < ships.size(); i++) {
 			Ship enemy = ships.get(i);
 			if (enemy.isAlive()) {
@@ -301,8 +329,8 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (ship.isAlive())
-			ship.shoot();
+		if (playerShip.isAlive())
+			playerShip.shoot();
 	}
 
 	@Override
