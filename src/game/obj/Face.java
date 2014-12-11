@@ -9,10 +9,13 @@ public class Face {
 	private List<Integer> vertices;
 	// indices of the texture coordinates
 	private List<Integer> textureCoordinates;
+	// indices of the normals
+	private List<Integer> normals;
 
 	public Face() {
 		vertices = new ArrayList<>();
 		textureCoordinates = new ArrayList<>();
+		normals = new ArrayList<>();
 	}
 
 	public List<Integer> getVertices() {
@@ -29,5 +32,13 @@ public class Face {
 
 	public void addTextureCoordinate(int textureCoordinate) {
 		textureCoordinates.add(textureCoordinate);
+	}
+
+	public List<Integer> getNormals() {
+		return normals;
+	}
+
+	public void addNormal(int normal) {
+		normals.add(normal);
 	}
 }

@@ -21,6 +21,7 @@ public class ObjModel {
 
 	protected List<Vector3f> vertices;
 	protected List<Vector3f> textureCoordinates;
+	protected List<Vector3f> normals;
 	protected List<Face> faces;
 
 	protected ObjModel() {
@@ -38,6 +39,7 @@ public class ObjModel {
 
 		vertices = new ArrayList<>();
 		textureCoordinates = new ArrayList<>();
+		normals = new ArrayList<>();
 		faces = new ArrayList<>();
 
 		Scanner scanner = new Scanner(file);
@@ -53,6 +55,11 @@ public class ObjModel {
 				float x = Float.parseFloat(line[1]);
 				float y = Float.parseFloat(line[2]);
 				textureCoordinates.add(new Vector3f(x, y));
+			} else if (line[0].equals("vn")) {
+				float x = Float.parseFloat(line[1]);
+				float y = Float.parseFloat(line[2]);
+				float z = Float.parseFloat(line[3]);
+				normals.add(new Vector3f(x, y, z));
 			} else if (line[0].equals("f")) {
 				Face face = new Face();
 				for (int i = 1; i < line.length; i++) {
@@ -64,6 +71,10 @@ public class ObjModel {
 					if (sections.length >= 2) {
 						int textureCoordinate = Integer.parseInt(sections[1]);
 						face.addTextureCoordinate(textureCoordinate);
+					}
+					if (sections.length >= 3) {
+						int normal = Integer.parseInt(sections[2]);
+						face.addNormal(normal);
 					}
 				}
 				faces.add(face);
@@ -95,6 +106,10 @@ public class ObjModel {
 							.getTextureCoordinates().get(i) - 1);
 					gl.glTexCoord2f(textureCoordinate.getX(),
 							textureCoordinate.getY());
+				}
+				if (normals != null && normals.size() > i) {
+					Vector3f normal = normals.get(face.getNormals().get(i) - 1);
+					gl.glNormal3f(normal.getX(), normal.getY(), normal.getZ());
 				}
 				int vertexIndex = face.getVertices().get(i);
 				Vector3f vertex = vertices.get(vertexIndex - 1);
