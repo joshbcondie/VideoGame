@@ -240,26 +240,28 @@ public class VideoGame extends GLCanvas implements GLEventListener,
 		gl.glPopMatrix();
 
 		// Cross-hairs
-		gl.glPushMatrix();
-		gl.glDisable(GL_TEXTURE_2D);
-		gl.glScalef(0.01f, 0.01f, 1);
-		gl.glTranslatef(0, -1f, 0);
-		gl.glColor3f(1, 0, 0);
+		if (playerShip.isAlive()) {
+			gl.glPushMatrix();
+			gl.glDisable(GL_TEXTURE_2D);
+			gl.glScalef(0.01f, 0.01f, 1);
+			gl.glTranslatef(0, -1f, 0);
+			gl.glColor3f(1, 0, 0);
 
-		gl.glBegin(GL_QUADS);
-		gl.glVertex3f(-0.1f, -0.5f, -1);
-		gl.glVertex3f(-0.1f, 0.5f, -1);
-		gl.glVertex3f(0.1f, 0.5f, -1);
-		gl.glVertex3f(0.1f, -0.5f, -1);
-		
-		gl.glVertex3f(-0.5f, -0.1f, -1);
-		gl.glVertex3f(-0.5f, 0.1f, -1);
-		gl.glVertex3f(0.5f, 0.1f, -1);
-		gl.glVertex3f(0.5f, -0.1f, -1);
-		gl.glEnd();
+			gl.glBegin(GL_QUADS);
+			gl.glVertex3f(-0.1f, -0.5f, -1);
+			gl.glVertex3f(-0.1f, 0.5f, -1);
+			gl.glVertex3f(0.1f, 0.5f, -1);
+			gl.glVertex3f(0.1f, -0.5f, -1);
 
-		gl.glEnable(GL_TEXTURE_2D);
-		gl.glPopMatrix();
+			gl.glVertex3f(-0.5f, -0.1f, -1);
+			gl.glVertex3f(-0.5f, 0.1f, -1);
+			gl.glVertex3f(0.5f, 0.1f, -1);
+			gl.glVertex3f(0.5f, -0.1f, -1);
+			gl.glEnd();
+
+			gl.glEnable(GL_TEXTURE_2D);
+			gl.glPopMatrix();
+		}
 	}
 
 	private void update() {
